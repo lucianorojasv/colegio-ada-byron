@@ -1,3 +1,4 @@
+// Panel Secretaria - Aprobar Observar Rechazar - Franco Capcha - U23243027
 // secretaria.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
