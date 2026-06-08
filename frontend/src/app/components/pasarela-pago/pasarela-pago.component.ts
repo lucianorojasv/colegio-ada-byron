@@ -1,3 +1,4 @@
+// Pasarela de Pago integrada al Portal - Luciano Rojas - U23271185
 // pasarela-pago.component.ts
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
