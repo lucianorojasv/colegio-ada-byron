@@ -1,0 +1,139 @@
+<!-- registro-alumno.component.html -->
+<div class="reg-wrap">
+  <div class="reg-bg"></div>
+
+  <div class="reg-container">
+    <a routerLink="/" class="back-btn">← Volver</a>
+
+    <!-- ÉXITO -->
+    <div class="reg-card exito-card" *ngIf="exito">
+      <div class="exito-icon">🎉</div>
+      <h2>¡Registro exitoso!</h2>
+      <p>Tu cuenta ha sido creada correctamente. Ahora puedes acceder al portal del colegio.</p>
+      <div class="exito-info">
+        <div class="ei-row"><span>👤 Estudiante:</span> <strong>{{ form.paterno }} {{ form.materno }}, {{ form.nombre }}</strong></div>
+        <div class="ei-row"><span>🪪 DNI:</span> <strong>{{ form.docidentidad }}</strong></div>
+        <div class="ei-row"><span>📧 Usuario:</span> <strong>{{ form.correo || form.docidentidad }}</strong></div>
+      </div>
+      <div class="exito-btns">
+        <a routerLink="/login" class="btn-primary-reg">🔐 Iniciar sesión</a>
+        <a routerLink="/portal-padre" class="btn-sec-reg">📋 Solicitar matrícula</a>
+      </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="reg-card" *ngIf="!exito">
+      <div class="reg-header">
+        <div class="reg-logo">👤</div>
+        <h1>Registro de Estudiante</h1>
+        <p>Completa tus datos para crear tu cuenta</p>
+      </div>
+
+      <div class="alert-error" *ngIf="error">⚠️ {{ error }}</div>
+
+      <form (ngSubmit)="registrar()" #f="ngForm">
+        <div class="form-section">
+          <div class="section-label">📋 Datos personales</div>
+          <div class="form-grid">
+            <div class="fg">
+              <label>DNI <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.docidentidad" name="dni"
+                     placeholder="Ingresa tu DNI" maxlength="8"
+                     pattern="[0-9]{8}" title="Debe contener exactamente 8 dígitos" />
+              <small *ngIf="form.docidentidad.length > 0 && form.docidentidad.length !== 8"
+                     class="field-hint error">Debe contener exactamente 8 dígitos</small>
+            </div>
+            <div class="fg">
+              <label>Primer nombre <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.nombre" name="nombre" placeholder="Ingresa tu primer nombre" />
+            </div>
+            <div class="fg">
+              <label>Apellido Paterno <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.paterno" name="paterno" placeholder="Ingresa tu apellido paterno" />
+            </div>
+            <div class="fg">
+              <label>Apellido Materno <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.materno" name="materno" placeholder="Ingresa tu apellido materno" />
+            </div>
+            <div class="fg">
+              <label>Fecha de Nacimiento <span class="req">*</span></label>
+              <input type="date" [(ngModel)]="form.fechanac" name="fechanac" />
+            </div>
+            <div class="fg">
+              <label>Sexo</label>
+              <select [(ngModel)]="form.sexo" name="sexo">
+                <option value="">Selecciona tu sexo</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-label">📧 Datos de contacto</div>
+          <div class="form-grid">
+            <div class="fg">
+              <label>Correo electrónico</label>
+              <input type="email" [(ngModel)]="form.correo" name="correo"
+                     placeholder="correo@ejemplo.com" />
+              <small class="field-hint">Será tu usuario de acceso al sistema</small>
+            </div>
+            <div class="fg">
+              <label>Teléfono (opcional)</label>
+              <input type="tel" [(ngModel)]="form.telefono" name="tel"
+                     placeholder="Ingresa tu número de teléfono" maxlength="9" />
+            </div>
+            <div class="fg full">
+              <label>Dirección</label>
+              <input type="text" [(ngModel)]="form.direccion" name="dir"
+                     placeholder="Dirección de domicilio" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-label">🔒 Contraseña de acceso</div>
+          <div class="form-grid">
+            <div class="fg pass-group">
+              <label>Contraseña <span class="req">*</span></label>
+              <div class="pass-wrap">
+                <input [type]="mostrarClave ? 'text' : 'password'"
+                       [(ngModel)]="clave" name="clave"
+                       placeholder="Mínimo 6 caracteres" />
+                <button type="button" class="eye-btn" (click)="mostrarClave = !mostrarClave">
+                  {{ mostrarClave ? '🙈' : '👁️' }}
+                </button>
+              </div>
+              <div class="strength-bar" *ngIf="clave.length > 0">
+                <div class="strength-fill"
+                     [ngClass]="clave.length < 6 ? 'weak' : clave.length < 10 ? 'medium' : 'strong'"
+                     [style.width]="(clave.length >= 12 ? 100 : clave.length * 8) + '%'"></div>
+              </div>
+              <small class="field-hint" *ngIf="clave.length > 0">
+                {{ clave.length < 6 ? 'Muy corta' : clave.length < 10 ? 'Aceptable' : 'Contraseña segura ✓' }}
+              </small>
+            </div>
+            <div class="fg">
+              <label>Confirmar contraseña <span class="req">*</span></label>
+              <input type="password" [(ngModel)]="confirmarClave" name="conf"
+                     placeholder="Repite tu contraseña" />
+              <small class="field-hint error"
+                     *ngIf="confirmarClave.length > 0 && clave !== confirmarClave">
+                Las contraseñas no coinciden
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-register" [disabled]="loading">
+          {{ loading ? 'Registrando...' : '✅ Crear cuenta' }}
+        </button>
+
+        <p class="login-link">
+          ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>

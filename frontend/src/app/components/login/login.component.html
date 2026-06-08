@@ -1,0 +1,48 @@
+<!-- login.component.html -->
+<div class="login-container">
+  <div class="login-bg"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <span>🎓</span>
+    </div>
+    <h2>Colegio Ada A. Byron</h2>
+    <p class="subtitle">Inicia sesión para continuar</p>
+
+    <div class="alert error" *ngIf="error">{{ error }}</div>
+
+    <div class="form-group">
+      <label>Usuario</label>
+      <input type="text" [(ngModel)]="codusuario" placeholder="tu@usuario.com"
+             (keyup.enter)="login()" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input [type]="mostrarClave ? 'text' : 'password'" [(ngModel)]="clave"
+             placeholder="••••••••" (keyup.enter)="login()" class="form-control" />
+      <button class="eye-toggle" type="button" (click)="mostrarClave = !mostrarClave">
+        {{ mostrarClave ? '🙈' : '👁️' }}
+      </button>
+    </div>
+
+    <button class="btn-login" (click)="login()" [disabled]="loading">
+      <span *ngIf="!loading">🔐 Iniciar Sesión</span>
+      <span *ngIf="loading">Cargando...</span>
+    </button>
+
+    <div class="login-links">
+      <a routerLink="/registro" class="link-reg">¿No tienes cuenta? Regístrate aquí</a>
+      <a routerLink="/" class="link-home">← Volver al inicio</a>
+    </div>
+
+    <div class="roles-info">
+      <div class="ri-title">Accesos disponibles</div>
+      <div class="ri-list">
+        <span class="ri-badge ri-admin">🔐 Admin</span>
+        <span class="ri-badge ri-sec">📝 Secretaria</span>
+        <span class="ri-badge ri-dir">📊 Directivo</span>
+        <span class="ri-badge ri-padre">👤 Padre</span>
+      </div>
+    </div>
+  </div>
+</div>

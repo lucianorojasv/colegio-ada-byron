@@ -1,0 +1,239 @@
+<!-- usuarios.component.html -->
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="school-name">Colegio Ada A.<br>Byron</span>
+      <span class="year-badge">2026</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard"   routerLinkActive="active" class="nav-item">
+        <i class="nav-icon">⊞</i> Dashboard
+      </a>
+      <a routerLink="/alumnos"     routerLinkActive="active" class="nav-item">
+        <i class="nav-icon">👤</i> Alumnos
+      </a>
+      <a routerLink="/grados"      routerLinkActive="active" class="nav-item">
+        <i class="nav-icon">◉</i> Grados
+      </a>
+      <a routerLink="/secciones"   routerLinkActive="active" class="nav-item">
+        <i class="nav-icon">⊡</i> Secciones
+      </a>
+      <a routerLink="/matricula"   routerLinkActive="active" class="nav-item">
+        <i class="nav-icon">📋</i> Matrícula
+      </a>
+      <a routerLink="/pagos"       routerLinkActive="active" class="nav-item">
+        <i class="nav-icon">💰</i> Pagos
+      </a>
+      <div class="nav-sep">Gestión</div>
+      <a routerLink="/secretaria"  routerLinkActive="active" class="nav-item">
+        <i class="nav-icon">📝</i> Solicitudes
+      </a>
+      <a routerLink="/usuarios"    routerLinkActive="active" class="nav-item active">
+        <i class="nav-icon">🔐</i> Usuarios
+      </a>
+      <div class="nav-sep">Acceso Externo</div>
+      <a routerLink="/portal-padre" target="_blank" class="nav-item nav-ext">
+        <i class="nav-icon">🌐</i> Portal del Padre
+      </a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <!-- Header -->
+    <div class="page-header">
+      <div>
+        <h1>Gestión de Usuarios</h1>
+        <p>Administra los accesos al sistema del Colegio Ada Byron</p>
+      </div>
+      <button class="btn btn-primary" (click)="abrirCrear()">
+        + Nuevo Usuario
+      </button>
+    </div>
+
+    <!-- Alertas -->
+    <div class="alert alert-success" *ngIf="exito">✅ {{ exito }}</div>
+    <div class="alert alert-error"   *ngIf="error && !mostrarModal">⚠️ {{ error }}</div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-chip">
+        <div class="ch-val ch-blue">{{ usuarios.length }}</div>
+        <div class="ch-lbl">Total usuarios</div>
+      </div>
+      <div class="stat-chip">
+        <div class="ch-val ch-green">{{ totalActivos }}</div>
+        <div class="ch-lbl">Activos</div>
+      </div>
+      <div class="stat-chip">
+        <div class="ch-val ch-red">{{ totalInactivos }}</div>
+        <div class="ch-lbl">Inactivos</div>
+      </div>
+      <div class="stat-chip">
+        <div class="ch-val ch-purple">{{ totalAdmins }}</div>
+        <div class="ch-lbl">Administradores</div>
+      </div>
+    </div>
+
+    <!-- Roles info -->
+    <div class="roles-info">
+      <div class="rol-card">
+        <span class="rol-badge rol-admin">ADMIN</span>
+        <span class="rol-desc">Acceso total al sistema</span>
+      </div>
+      <div class="rol-card">
+        <span class="rol-badge rol-sec">SECRETARIA</span>
+        <span class="rol-desc">Gestión de solicitudes y matrículas</span>
+      </div>
+      <div class="rol-card">
+        <span class="rol-badge rol-dir">DIRECTIVO</span>
+        <span class="rol-desc">Reportes y consultas</span>
+      </div>
+      <div class="rol-card">
+        <span class="rol-badge rol-padre">PADRE</span>
+        <span class="rol-desc">Consulta de matrícula propia</span>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card">
+      <div class="card-header">
+        <input class="search-input" [(ngModel)]="busqueda"
+               placeholder="🔍 Buscar por usuario o rol..." />
+        <span class="total-label">{{ usuariosFiltrados.length }} usuarios</span>
+      </div>
+
+      <div *ngIf="loading" class="loading-state">Cargando usuarios...</div>
+
+      <table class="data-table" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of usuariosFiltrados">
+            <td class="id-col">{{ u.idusuario }}</td>
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar" [ngClass]="'av-' + u.rol?.toLowerCase()">
+                  {{ u.codusuario?.charAt(0)?.toUpperCase() }}
+                </div>
+                <div>
+                  <div class="user-name">{{ u.codusuario }}</div>
+                  <div class="user-sub">Último acceso: Hoy</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="rol-badge" [ngClass]="getRolColor(u.rol)">{{ u.rol }}</span>
+            </td>
+            <td>
+              <span class="status-badge"
+                    [ngClass]="u.codestado === 'ACTIVO' ? 'status-activo' : 'status-inactivo'">
+                {{ u.codestado === 'ACTIVO' ? '● Activo' : '● Inactivo' }}
+              </span>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <!-- Editar -->
+                <button class="action-btn" (click)="abrirEditar(u)" title="Editar usuario">
+                  ✏️
+                </button>
+                <!-- Reset password -->
+                <button class="action-btn" (click)="resetPassword(u)" title="Cambiar contraseña">
+                  🔑
+                </button>
+                <!-- Activar/Desactivar -->
+                <button class="action-btn"
+                        [title]="u.codestado === 'ACTIVO' ? 'Desactivar' : 'Activar'"
+                        (click)="cambiarEstado(u)">
+                  {{ u.codestado === 'ACTIVO' ? '🔒' : '🔓' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="usuariosFiltrados.length === 0">
+            <td colspan="5" class="no-data">No se encontraron usuarios</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- ============================================================
+     MODAL: Crear / Editar Usuario
+     ============================================================ -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal($event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>{{ modoEdicion ? '✏️ Editar Usuario' : '+ Nuevo Usuario' }}</h2>
+      <button class="modal-close" (click)="mostrarModal = false">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="alert alert-error" *ngIf="error">⚠️ {{ error }}</div>
+
+      <div class="form-grid">
+        <!-- Usuario / Correo -->
+        <div class="form-group full">
+          <label>Usuario (correo o nombre de acceso) <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="form.codusuario" class="form-control"
+                 placeholder="ej: secretaria@adabyron.edu.pe"
+                 [readonly]="modoEdicion" />
+          <small class="hint" *ngIf="!modoEdicion">
+            Se recomienda usar el correo electrónico como usuario
+          </small>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="form-group full">
+          <label>
+            Contraseña
+            <span class="req" *ngIf="!modoEdicion">*</span>
+            <span class="opt" *ngIf="modoEdicion">(dejar vacío para no cambiar)</span>
+          </label>
+          <input type="password" [(ngModel)]="form.clave" class="form-control"
+                 placeholder="{{ modoEdicion ? 'Nueva contraseña (opcional)' : 'Mínimo 4 caracteres' }}" />
+        </div>
+
+        <!-- Rol -->
+        <div class="form-group">
+          <label>Rol <span class="req">*</span></label>
+          <select [(ngModel)]="form.rol" class="form-control">
+            <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+          </select>
+        </div>
+
+        <!-- Estado -->
+        <div class="form-group">
+          <label>Estado</label>
+          <select [(ngModel)]="form.codestado" class="form-control">
+            <option value="ACTIVO">Activo</option>
+            <option value="INACTIVO">Inactivo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Info del rol seleccionado -->
+      <div class="rol-info-box" [ngClass]="'rol-info-' + form.rol?.toLowerCase()">
+        <strong>{{ form.rol }}</strong> —
+        <span *ngIf="form.rol === 'ADMIN'">Acceso completo a todos los módulos del sistema.</span>
+        <span *ngIf="form.rol === 'SECRETARIA'">Puede gestionar solicitudes, aprobar matrículas y registrar pagos.</span>
+        <span *ngIf="form.rol === 'DIRECTIVO'">Puede ver reportes y estadísticas. Solo lectura.</span>
+        <span *ngIf="form.rol === 'PADRE'">Puede consultar el estado de su solicitud de matrícula.</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="mostrarModal = false">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardar()" [disabled]="loading">
+        {{ loading ? 'Guardando...' : (modoEdicion ? 'Actualizar Usuario' : 'Crear Usuario') }}
+      </button>
+    </div>
+  </div>
+</div>

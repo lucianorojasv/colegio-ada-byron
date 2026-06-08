@@ -1,0 +1,430 @@
+<div class="portal-wrap">
+
+  <!-- HEADER -->
+  <div class="portal-header">
+    <div class="header-logo">
+      <div class="logo-circle">A</div>
+      <div>
+        <div class="header-title">Colegio Ada A. Byron</div>
+        <div class="header-sub">Portal de Matrícula Virtual 2026</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-link" (click)="modoConsulta = !modoConsulta; error = ''">
+        {{ modoConsulta ? '← Volver al formulario' : '🔍 Consultar mi solicitud' }}
+      </button>
+      <a routerLink="/login" class="btn-link">Iniciar Sesión</a>
+    </div>
+  </div>
+
+  <div class="portal-body">
+
+    <!-- ══════════════════════════════════
+         CONSULTA DE ESTADO
+         ══════════════════════════════════ -->
+    <div *ngIf="modoConsulta" class="consulta-box">
+      <div class="consulta-card">
+        <h2>🔍 Consultar Estado de Matrícula</h2>
+        <p>Ingresa el número de solicitud que recibiste al registrarte</p>
+        <div class="alert alert-error" *ngIf="error">{{ error }}</div>
+        <div class="search-row">
+          <input type="number" [(ngModel)]="idConsulta" class="form-control"
+                 placeholder="Número de solicitud" (keyup.enter)="consultarEstado()" />
+          <button class="btn btn-primary" (click)="consultarEstado()" [disabled]="loading">
+            {{ loading ? 'Buscando...' : 'Consultar' }}
+          </button>
+        </div>
+
+        <div class="resultado-estado" *ngIf="resultadoConsulta">
+          <div class="estado-header" [ngClass]="getColorEstado(resultadoConsulta.estado)">
+            <div class="estado-icon">
+              <span *ngIf="resultadoConsulta.estado === 'PEND'">⏳</span>
+              <span *ngIf="resultadoConsulta.estado === 'APRO'">✅</span>
+              <span *ngIf="resultadoConsulta.estado === 'OBS'">⚠️</span>
+              <span *ngIf="resultadoConsulta.estado === 'REC'">❌</span>
+            </div>
+            <div>
+              <div class="estado-titulo">{{ resultadoConsulta.estadoDescripcion }}</div>
+              <div class="estado-sub">Solicitud #{{ resultadoConsulta.idsolicitud }}</div>
+            </div>
+          </div>
+          <div class="estado-detalle">
+            <div class="det-row"><span>Estudiante:</span><strong>{{ resultadoConsulta.estudiante }}</strong></div>
+            <div class="det-row"><span>Grado:</span><strong>{{ resultadoConsulta.grado }}</strong></div>
+            <div class="det-row"><span>Sección:</span><strong>{{ resultadoConsulta.seccion }}</strong></div>
+            <div class="det-row"><span>Fecha:</span><strong>{{ resultadoConsulta.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</strong></div>
+            <div class="det-row" *ngIf="resultadoConsulta.comentario">
+              <span>Observación:</span><strong>{{ resultadoConsulta.comentario }}</strong>
+            </div>
+          </div>
+
+          <!-- APROBADA: opciones de pago -->
+          <div class="pago-opciones" *ngIf="resultadoConsulta.estado === 'APRO' && !pagoRealizado">
+            <div class="pago-titulo">🎉 ¡Solicitud aprobada! Elige cómo pagar tu matrícula</div>
+            <div class="pago-monto-info">
+              <span class="monto-label">Monto a pagar:</span>
+              <span class="monto-val">S/ 500.00</span>
+              <span class="monto-concepto">· Matrícula 2026</span>
+            </div>
+            <div class="opciones-grid">
+              <div class="opcion-card opcion-online" (click)="abrirPasarela()">
+                <div class="op-icono">💳</div>
+                <div class="op-titulo">Pagar en línea</div>
+                <div class="op-desc">Desde aquí, de forma segura</div>
+                <div class="op-metodos">
+                  <span class="met-chip visa">VISA</span>
+                  <span class="met-chip mc">MC</span>
+                  <span class="met-chip yape">Yape</span>
+                  <span class="met-chip plin">Plin</span>
+                </div>
+                <div class="op-badge op-badge-green">⚡ Inmediato y seguro</div>
+              </div>
+              <div class="opcion-card opcion-presencial">
+                <div class="op-icono">🏫</div>
+                <div class="op-titulo">Pagar en el colegio</div>
+                <div class="op-desc">Acércate a caja en secretaría</div>
+                <div class="op-info">
+                  <div class="oi-row"><span>📍</span> Av. San Martín 245, Chincha</div>
+                  <div class="oi-row"><span>⏰</span> Lun–Vie: 8:00 am – 5:00 pm</div>
+                  <div class="oi-row"><span>⏰</span> Sábados: 8:00 am – 12:00 pm</div>
+                  <div class="oi-row"><span>💵</span> Efectivo / Depósito BCP</div>
+                </div>
+                <div class="op-badge op-badge-gray">📋 Presencial</div>
+              </div>
+            </div>
+            <div class="pago-aviso">
+              ⚠️ Tienes <strong>7 días</strong> para completar el pago. Pasado ese plazo la vacante será liberada.
+            </div>
+          </div>
+
+          <!-- PAGO COMPLETADO -->
+          <div class="pago-completado" *ngIf="resultadoConsulta.estado === 'APRO' && pagoRealizado">
+            <div class="pc-icon">🎓</div>
+            <div class="pc-titulo">¡Matrícula completada!</div>
+            <div class="pc-sub">El pago fue procesado exitosamente.</div>
+            <div class="pc-codigo">Código: <strong>{{ codigoTransaccion }}</strong></div>
+          </div>
+
+          <!-- OBSERVADA -->
+          <div class="estado-instruccion obs" *ngIf="resultadoConsulta.estado === 'OBS'">
+            ⚠️ {{ resultadoConsulta.comentario || 'Su solicitud tiene observaciones. Presente la documentación requerida en secretaría.' }}
+          </div>
+
+          <!-- RECHAZADA -->
+          <div class="estado-instruccion rec" *ngIf="resultadoConsulta.estado === 'REC'">
+            ❌ Su solicitud fue rechazada. {{ resultadoConsulta.comentario }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASARELA DE PAGO -->
+    <app-pasarela-pago
+      *ngIf="mostrarPasarela"
+      [idestudiante]="resultadoConsulta?.idestudiante || 1"
+      [nombreEstudiante]="resultadoConsulta?.estudiante || ''"
+      [monto]="500"
+      (pagoExitoso)="onPagoExitoso($event)"
+      (cerrar)="mostrarPasarela = false">
+    </app-pasarela-pago>
+
+    <!-- ══════════════════════════════════
+         FORMULARIO (5 PASOS)
+         ══════════════════════════════════ -->
+    <div *ngIf="!modoConsulta && paso < 6">
+
+      <!-- STEPPER -->
+      <div class="stepper">
+        <div class="step" [ngClass]="{'active': paso >= 1, 'done': paso > 1}">
+          <div class="step-circle">{{ paso > 1 ? '✓' : '1' }}</div>
+          <div class="step-label">Apoderado</div>
+        </div>
+        <div class="step-line" [ngClass]="{'active': paso > 1}"></div>
+        <div class="step" [ngClass]="{'active': paso >= 2, 'done': paso > 2}">
+          <div class="step-circle">{{ paso > 2 ? '✓' : '2' }}</div>
+          <div class="step-label">Estudiante</div>
+        </div>
+        <div class="step-line" [ngClass]="{'active': paso > 2}"></div>
+        <div class="step" [ngClass]="{'active': paso >= 3, 'done': paso > 3}">
+          <div class="step-circle">{{ paso > 3 ? '✓' : '3' }}</div>
+          <div class="step-label">Sección</div>
+        </div>
+        <div class="step-line" [ngClass]="{'active': paso > 3}"></div>
+        <div class="step" [ngClass]="{'active': paso >= 4, 'done': paso > 4}">
+          <div class="step-circle">{{ paso > 4 ? '✓' : '4' }}</div>
+          <div class="step-label">Documentos</div>
+        </div>
+        <div class="step-line" [ngClass]="{'active': paso > 4}"></div>
+        <div class="step" [ngClass]="{'active': paso >= 5}">
+          <div class="step-circle">5</div>
+          <div class="step-label">Confirmar</div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="alert alert-error" *ngIf="error">⚠️ {{ error }}</div>
+
+        <!-- PASO 1: APODERADO -->
+        <div *ngIf="paso === 1">
+          <h2 class="step-title">👤 Datos del Apoderado</h2>
+          <p class="step-desc">Ingrese sus datos como padre, madre o tutor legal del estudiante</p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Apellido Paterno <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.apoderadoPaterno" class="form-control" placeholder="Apellido paterno" />
+            </div>
+            <div class="form-group">
+              <label>Apellido Materno <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.apoderadoMaterno" class="form-control" placeholder="Apellido materno" />
+            </div>
+            <div class="form-group full">
+              <label>Nombres <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.apoderadoNombre" class="form-control" placeholder="Nombres completos" />
+            </div>
+            <div class="form-group">
+              <label>DNI <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.apoderadoDni" class="form-control" placeholder="8 dígitos" maxlength="8" />
+            </div>
+            <div class="form-group">
+              <label>Celular <span class="req">*</span></label>
+              <input type="tel" [(ngModel)]="form.apoderadoCelular" class="form-control" placeholder="999 999 999" />
+            </div>
+            <div class="form-group full">
+              <label>Correo electrónico <span class="req">*</span></label>
+              <input type="email" [(ngModel)]="form.apoderadoCorreo" class="form-control" placeholder="correo&#64;ejemplo.com" />
+              <small class="hint">Se usará para notificaciones sobre su solicitud</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 2: ESTUDIANTE -->
+        <div *ngIf="paso === 2">
+          <h2 class="step-title">🎒 Datos del Estudiante</h2>
+          <p class="step-desc">Ingrese los datos del niño o joven a matricular</p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Apellido Paterno <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.estudiantePaterno" class="form-control" placeholder="Apellido paterno" />
+            </div>
+            <div class="form-group">
+              <label>Apellido Materno <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.estudianteMaterno" class="form-control" placeholder="Apellido materno" />
+            </div>
+            <div class="form-group full">
+              <label>Nombres <span class="req">*</span></label>
+              <input type="text" [(ngModel)]="form.estudianteNombre" class="form-control" placeholder="Nombres completos" />
+            </div>
+            <div class="form-group">
+              <label>Fecha de Nacimiento <span class="req">*</span></label>
+              <input type="date" [(ngModel)]="form.estudianteFechanac" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>DNI del Estudiante</label>
+              <input type="text" [(ngModel)]="form.estudianteDni" class="form-control" placeholder="DNI (opcional)" maxlength="8" />
+            </div>
+            <div class="form-group full">
+              <label>Dirección</label>
+              <input type="text" [(ngModel)]="form.estudianteDireccion" class="form-control" placeholder="Dirección del domicilio" />
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 3: SECCIÓN -->
+        <div *ngIf="paso === 3">
+          <h2 class="step-title">📚 Seleccionar Grado y Sección</h2>
+          <p class="step-desc">Seleccione el grado y sección al que desea postular</p>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Grado <span class="req">*</span></label>
+              <select [(ngModel)]="form.idgrado" (ngModelChange)="onGradoChange()" class="form-control">
+                <option [value]="0" disabled>Seleccionar grado</option>
+                <option *ngFor="let g of grados" [value]="g.idgrado">{{ g.nombre }}</option>
+              </select>
+            </div>
+            <div class="form-group full" *ngIf="seccionesFiltradas.length > 0">
+              <label>Sección <span class="req">*</span></label>
+              <div class="secciones-opciones">
+                <div class="seccion-opcion" *ngFor="let s of seccionesFiltradas"
+                     [ngClass]="{'selected': form.idseccion == s.idseccion}"
+                     (click)="form.idseccion = s.idseccion!">
+                  <div class="so-nombre">{{ s.nombre }}</div>
+                  <div class="so-info">
+                    <span class="turno-chip">{{ s.turno }}</span>
+                    <span class="aula-chip">Aula {{ s.aula }}</span>
+                    <span class="cap-chip">Cap. {{ s.capacidad }}</span>
+                  </div>
+                  <div class="so-check" *ngIf="form.idseccion == s.idseccion">✓</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>Comentario (opcional)</label>
+              <textarea [(ngModel)]="form.comentario" class="form-control" rows="2"
+                        placeholder="¿Alguna información adicional?"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 4: DOCUMENTOS -->
+        <div *ngIf="paso === 4">
+          <h2 class="step-title">📂 Documentos Requeridos</h2>
+          <p class="step-desc">Suba los documentos obligatorios. La secretaría los verificará antes de aprobar su solicitud.</p>
+
+          <!-- Info documentos -->
+          <div class="docs-info-banner">
+            <div class="dib-icon">📋</div>
+            <div class="dib-body">
+              <div class="dib-title">Requisitos según norma nacional (MINEDU)</div>
+              <div class="dib-sub">Formatos aceptados: PDF, JPG, PNG — Tamaño máximo: 5MB por archivo</div>
+            </div>
+            <div class="dib-contador">
+              <span class="dc-cargados">{{ totalDocsCargados }}</span>
+              <span class="dc-sep">/</span>
+              <span class="dc-total">{{ documentosFiltrados.length }}</span>
+              <div class="dc-lbl">cargados</div>
+            </div>
+          </div>
+
+          <!-- Lista de documentos -->
+          <div class="docs-lista">
+            <div class="doc-item" *ngFor="let doc of documentosFiltrados"
+                 [ngClass]="{'doc-cargado': doc.cargado, 'doc-requerido': doc.obligatorio && !doc.cargado}">
+
+              <div class="doc-header">
+                <div class="doc-icon">{{ doc.cargado ? getIconoArchivo(doc) : '📄' }}</div>
+                <div class="doc-info">
+                  <div class="doc-nombre">
+                    {{ doc.nombre }}
+                    <span class="doc-badge-req" *ngIf="doc.obligatorio">Obligatorio</span>
+                    <span class="doc-badge-opc" *ngIf="!doc.obligatorio">Opcional</span>
+                  </div>
+                  <div class="doc-desc">{{ doc.descripcion }}</div>
+                  <div class="doc-archivo-info" *ngIf="doc.cargado && doc.archivo">
+                    <span class="daf-nombre">{{ doc.archivo.name }}</span>
+                    <span class="daf-size">{{ formatSize(doc.archivo.size) }}</span>
+                    <span class="daf-ok">✅ Cargado</span>
+                  </div>
+                </div>
+                <div class="doc-acciones">
+                  <div *ngIf="!doc.cargado">
+                    <label class="btn-upload" [for]="'file-' + doc.id">
+                      📤 Subir archivo
+                    </label>
+                    <input [id]="'file-' + doc.id" type="file"
+                           accept=".pdf,.jpg,.jpeg,.png"
+                           style="display:none"
+                           (change)="onArchivoSeleccionado($event, doc)" />
+                  </div>
+                  <div *ngIf="doc.cargado" class="btn-eliminar-wrap">
+                    <button class="btn-eliminar" (click)="eliminarArchivo(doc)">🗑️ Quitar</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Preview imagen -->
+              <div class="doc-preview" *ngIf="doc.cargado && doc.previsualizacion">
+                <img [src]="doc.previsualizacion" alt="preview" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Aviso documentos faltantes -->
+          <div class="docs-faltantes" *ngIf="documentosObligatoriosFaltantes.length > 0">
+            <strong>⚠️ Faltan los siguientes documentos obligatorios:</strong>
+            <ul>
+              <li *ngFor="let d of documentosObligatoriosFaltantes">{{ d.nombre }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PASO 5: CONFIRMACIÓN -->
+        <div *ngIf="paso === 5">
+          <h2 class="step-title">✅ Confirmar Solicitud</h2>
+          <p class="step-desc">Revise todos los datos antes de enviar</p>
+
+          <div class="resumen-box">
+            <div class="resumen-section">
+              <div class="rs-title">👤 Apoderado</div>
+              <div class="rs-row"><span>Nombre:</span><strong>{{ form.apoderadoPaterno }} {{ form.apoderadoMaterno }}, {{ form.apoderadoNombre }}</strong></div>
+              <div class="rs-row"><span>DNI:</span><strong>{{ form.apoderadoDni }}</strong></div>
+              <div class="rs-row"><span>Celular:</span><strong>{{ form.apoderadoCelular }}</strong></div>
+              <div class="rs-row"><span>Correo:</span><strong>{{ form.apoderadoCorreo }}</strong></div>
+            </div>
+            <div class="resumen-section">
+              <div class="rs-title">🎒 Estudiante</div>
+              <div class="rs-row"><span>Nombre:</span><strong>{{ form.estudiantePaterno }} {{ form.estudianteMaterno }}, {{ form.estudianteNombre }}</strong></div>
+              <div class="rs-row"><span>Fecha nac.:</span><strong>{{ form.estudianteFechanac | date:'dd/MM/yyyy' }}</strong></div>
+              <div class="rs-row" *ngIf="form.estudianteDni"><span>DNI:</span><strong>{{ form.estudianteDni }}</strong></div>
+            </div>
+            <div class="resumen-section">
+              <div class="rs-title">📚 Sección</div>
+              <div class="rs-row"><span>Grado:</span><strong>{{ seccionSeleccionada?.grado?.nombre }}</strong></div>
+              <div class="rs-row"><span>Sección:</span><strong>{{ seccionSeleccionada?.nombre }}</strong></div>
+              <div class="rs-row"><span>Turno:</span><strong>{{ seccionSeleccionada?.turno }}</strong></div>
+            </div>
+            <div class="resumen-section">
+              <div class="rs-title">📂 Documentos adjuntos</div>
+              <div class="doc-resumen-item" *ngFor="let d of documentosFiltrados">
+                <span [ngClass]="d.cargado ? 'dr-ok' : (d.obligatorio ? 'dr-falta' : 'dr-opc')">
+                  {{ d.cargado ? '✅' : (d.obligatorio ? '❌' : '—') }}
+                </span>
+                <span class="dr-nombre">{{ d.nombre }}</span>
+                <span class="dr-archivo" *ngIf="d.cargado">{{ d.archivo?.name }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="aviso-info">
+            ℹ️ La secretaría verificará cada documento. Le notificaremos el resultado por correo.
+          </div>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="form-nav">
+          <button class="btn btn-ghost" *ngIf="paso > 1" (click)="pasoAnterior()">← Anterior</button>
+          <button class="btn btn-primary" *ngIf="paso < 5" (click)="siguientePaso()">Siguiente →</button>
+          <button class="btn btn-success" *ngIf="paso === 5" (click)="enviarSolicitud()" [disabled]="loading">
+            {{ loading ? 'Enviando...' : '📤 Enviar Solicitud' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 6: ÉXITO -->
+    <div *ngIf="!modoConsulta && paso === 6" class="exito-box">
+      <div class="exito-card">
+        <div class="exito-icon">🎉</div>
+        <h2>¡Solicitud Enviada!</h2>
+        <p>Su solicitud de matrícula ha sido registrada exitosamente con todos sus documentos.</p>
+        <div class="codigo-solicitud">
+          <div class="cod-label">Número de Solicitud</div>
+          <div class="cod-numero">#{{ solicitudCreada?.idsolicitud }}</div>
+          <div class="cod-hint">Guarde este número para consultar el estado</div>
+        </div>
+        <div class="exito-info">
+          <div class="ei-row">👦 <strong>{{ solicitudCreada?.estudiante }}</strong></div>
+          <div class="ei-row">📅 {{ solicitudCreada?.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div class="ei-row">📊 Estado: <span class="badge-pend">PENDIENTE</span></div>
+        </div>
+        <div class="exito-pasos">
+          <div class="ep-item"><span class="ep-num">1</span><span>La secretaría revisará sus documentos</span></div>
+          <div class="ep-item"><span class="ep-num">2</span><span>Recibirá notificación de aprobación</span></div>
+          <div class="ep-item"><span class="ep-num">3</span><span>Podrá pagar en línea o en el colegio</span></div>
+        </div>
+        <div class="exito-btns">
+          <button class="btn btn-outline" (click)="modoConsulta = true; idConsulta = solicitudCreada?.idsolicitud; paso = 1">
+            🔍 Consultar Estado
+          </button>
+          <button class="btn btn-primary" (click)="paso = 1">
+            + Nueva Solicitud
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="portal-footer">
+    <p>Colegio Ada A. Byron — Chincha, Ica | Matrícula ágil, segura y al alcance de todos.</p>
+  </div>
+</div>

@@ -1,0 +1,355 @@
+<!-- pasarela-pago.component.html -->
+<div class="pasarela-overlay" (click)="cerrar.emit()">
+  <div class="pasarela-modal" (click)="$event.stopPropagation()">
+
+    <!-- HEADER -->
+    <div class="modal-hdr">
+      <div class="hdr-left">
+        <div class="ada-logo">A</div>
+        <div>
+          <div class="ada-title">Colegio Ada A. Byron</div>
+          <div class="ada-sub">
+            <span *ngIf="paso === 'metodo'">Pago de matrícula 2026</span>
+            <span *ngIf="paso === 'yape'">Pago con Yape</span>
+            <span *ngIf="paso === 'plin'">Pago con Plin</span>
+            <span *ngIf="paso === 'tarjeta'">Pago con tarjeta</span>
+            <span *ngIf="paso === 'confirmacion'">Confirmación de pago</span>
+          </div>
+        </div>
+      </div>
+      <div class="hdr-monto" *ngIf="paso !== 'confirmacion'">
+        <div class="monto-lbl">Total</div>
+        <div class="monto-val">S/ {{ monto | number:'1.2-2' }}</div>
+      </div>
+      <button class="close-btn" (click)="cerrar.emit()">✕</button>
+    </div>
+
+    <!-- ════════════════════════════════════
+         PASO 1: SELECCIÓN DE MÉTODO
+         ════════════════════════════════════ -->
+    <div class="modal-body" *ngIf="paso === 'metodo'">
+      <div class="method-title">Elige un medio de pago</div>
+
+      <div class="method-option" [class.selected]="metodoPago === 'TARJETA'"
+           (click)="seleccionarMetodo('TARJETA')">
+        <div class="mo-radio">
+          <div class="radio-dot" [class.active]="metodoPago === 'TARJETA'"></div>
+        </div>
+        <div class="mo-body">
+          <div class="mo-title">Tarjeta de crédito y/o débito</div>
+          <div class="mo-sub">Realiza tu pago en cuotas o directo</div>
+          <div class="mo-logos">
+            <div class="logo-visa">VISA</div>
+            <div class="logo-mc">
+              <div class="mc-r"></div><div class="mc-y"></div>
+            </div>
+            <div class="logo-amex">AMEX</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="method-option" [class.selected]="metodoPago === 'YAPE'"
+           (click)="seleccionarMetodo('YAPE')">
+        <div class="mo-radio">
+          <div class="radio-dot" [class.active]="metodoPago === 'YAPE'"></div>
+        </div>
+        <div class="mo-body">
+          <div class="mo-title">Pago con Yape / Plin</div>
+          <div class="mo-logos mt6">
+            <div class="logo-yape">S/ yape</div>
+            <div class="logo-plin">plin</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-error" *ngIf="error">{{ error }}</div>
+
+      <div class="monto-row">S/ {{ monto | number:'1.2-2' }}</div>
+
+      <button class="btn-continuar" (click)="continuarMetodo()">Continuar</button>
+    </div>
+
+    <!-- ════════════════════════════════════
+         YAPE/PLIN: Sub selección
+         ════════════════════════════════════ -->
+    <div class="modal-body" *ngIf="paso === 'yape' && metodoPago === 'YAPE'">
+      <div class="method-title">Elige tu billetera</div>
+
+      <div class="billetera-grid">
+        <div class="bill-card" [class.sel]="metodoPago === 'YAPE'"
+             (click)="metodoPago='YAPE'; paso='yape'">
+          <div class="logo-yape lg">S/ yape</div>
+          <div class="bill-name">Yape</div>
+        </div>
+        <div class="bill-card" [class.sel]="metodoPago === 'PLIN'"
+             (click)="metodoPago='PLIN'; paso='plin'">
+          <div class="logo-plin lg">plin</div>
+          <div class="bill-name">Plin</div>
+        </div>
+      </div>
+
+      <div class="yape-form">
+        <div class="yape-header">
+          <div class="logo-yape lg">S/ yape</div>
+        </div>
+        <div class="form-group">
+          <label>Ingresa tu celular Yape</label>
+          <div class="input-icon-wrap">
+            <span class="inp-icon">📱</span>
+            <input type="tel" [(ngModel)]="celularYape"
+                   placeholder="Ej: 987 654 321" maxlength="9"
+                   class="form-inp" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Ingresa el código de aprobación</label>
+          <div class="hint-text">Encuéntralo en tu Yape, opción "Aprobar compras"</div>
+          <input type="text" [(ngModel)]="codigoYape"
+                 placeholder="Código de 6 dígitos" maxlength="6"
+                 class="form-inp" />
+        </div>
+      </div>
+
+      <div class="alert-error" *ngIf="error">{{ error }}</div>
+
+      <button class="btn-yape" (click)="procesarPago()" [disabled]="loading">
+        <span *ngIf="!loading">Yapear S/ {{ monto | number:'1.2-2' }}</span>
+        <span *ngIf="loading">Procesando...</span>
+      </button>
+
+      <button class="btn-back" (click)="paso = 'metodo'">← Volver</button>
+
+      <div class="pci-badge">🔒 Pago seguro con cifrado SSL</div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         PLIN
+         ════════════════════════════════════ -->
+    <div class="modal-body" *ngIf="paso === 'plin' || (paso === 'yape' && metodoPago === 'PLIN')">
+      <div class="plin-header">
+        <div class="logo-plin lg">plin</div>
+        <div class="plin-title">Paga con Plin:</div>
+      </div>
+
+      <div class="form-group">
+        <label>Ingresa tu celular asociado a Plin</label>
+        <div class="input-icon-wrap">
+          <span class="inp-icon">📱</span>
+          <input type="tel" [(ngModel)]="celularPlin"
+                 placeholder="Ingresa el número de celular" maxlength="9"
+                 class="form-inp" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Elige tu banco</label>
+        <div class="bancos-grid">
+          <div class="banco-card" *ngFor="let b of bancos"
+               [class.sel]="bancoPlin === b.id"
+               (click)="bancoPlin = b.id">
+            <div class="banco-check" *ngIf="bancoPlin === b.id">✓</div>
+            <div class="banco-icon" [style.background]="b.color">
+              {{ b.nombre.charAt(0) }}
+            </div>
+            <div class="banco-name">{{ b.nombre }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="plin-steps">
+        <div class="plin-step">
+          <div class="step-num">1</div>
+          <div class="step-txt">Aprueba el pago en tu app</div>
+        </div>
+        <div class="plin-step">
+          <div class="step-num step-pink">2</div>
+          <div class="step-txt">Vuelve a esta ventana para finalizar tu compra</div>
+        </div>
+      </div>
+
+      <div class="alert-error" *ngIf="error">{{ error }}</div>
+
+      <button class="btn-plin" (click)="procesarPago()" [disabled]="loading">
+        <span *ngIf="!loading">Plinear S/ {{ monto | number:'1.2-2' }}</span>
+        <span *ngIf="loading">Procesando...</span>
+      </button>
+
+      <button class="btn-back" (click)="paso = 'metodo'">← Volver</button>
+
+      <div class="pci-badge">🔒 PCI Security Standards Council</div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         TARJETA
+         ════════════════════════════════════ -->
+    <div class="modal-body" *ngIf="paso === 'tarjeta'">
+      <div class="recordatorio">
+        <span>⚠️</span> Recuerda activar tus compras por internet
+      </div>
+
+      <!-- Vista previa de tarjeta -->
+      <div class="card-preview" [ngClass]="tipoDetectado.toLowerCase()">
+        <div class="card-chip">▬▬</div>
+        <div class="card-number">
+          {{ numeroTarjeta || '**** **** **** ****' }}
+        </div>
+        <div class="card-bottom">
+          <div>
+            <div class="card-lbl">Titular</div>
+            <div class="card-val">{{ (nombreTitular + ' ' + apellidoTitular) || 'NOMBRE APELLIDO' }}</div>
+          </div>
+          <div>
+            <div class="card-lbl">Vence</div>
+            <div class="card-val">{{ fechaVenc || 'MM/AA' }}</div>
+          </div>
+          <div class="card-brand-logo">
+            <span *ngIf="tipoDetectado === 'VISA'">VISA</span>
+            <span *ngIf="tipoDetectado === 'MASTERCARD'" class="mc-badge">●●</span>
+            <span *ngIf="tipoDetectado === 'AMEX'">AMEX</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row-full">
+        <label>Número de tarjeta</label>
+        <div class="input-icon-wrap">
+          <input type="text" [(ngModel)]="numeroTarjeta"
+                 (input)="onNumeroChange()"
+                 placeholder="0000 0000 0000 0000"
+                 class="form-inp" maxlength="19" />
+          <div class="card-logos-input">
+            <span *ngIf="!tipoDetectado || tipoDetectado === 'VISA'" class="ci-visa">VISA</span>
+            <span *ngIf="!tipoDetectado || tipoDetectado === 'MASTERCARD'" class="ci-mc">●●</span>
+            <span *ngIf="!tipoDetectado || tipoDetectado === 'AMEX'" class="ci-amex">AE</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Caducidad</label>
+          <input type="text" [(ngModel)]="fechaVenc"
+                 (input)="onFechaChange()"
+                 placeholder="MM/AA" maxlength="5"
+                 class="form-inp" />
+        </div>
+        <div class="form-group">
+          <label>CVV</label>
+          <div class="input-icon-wrap">
+            <input [type]="mostrarCvv ? 'text' : 'password'"
+                   [(ngModel)]="cvv" placeholder="***"
+                   maxlength="4" class="form-inp" />
+            <button class="eye-btn" type="button"
+                    (click)="mostrarCvv = !mostrarCvv">
+              {{ mostrarCvv ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Nombres</label>
+          <input type="text" [(ngModel)]="nombreTitular"
+                 placeholder="NOMBRE" class="form-inp" style="text-transform:uppercase" />
+        </div>
+        <div class="form-group">
+          <label>Apellidos</label>
+          <input type="text" [(ngModel)]="apellidoTitular"
+                 placeholder="APELLIDOS" class="form-inp" style="text-transform:uppercase" />
+        </div>
+      </div>
+
+      <div class="form-row-full">
+        <label>Correo electrónico</label>
+        <input type="email" [(ngModel)]="correoTitular"
+               placeholder="correo@ejemplo.com" class="form-inp" />
+      </div>
+
+      <div class="alert-error" *ngIf="error">⚠️ {{ error }}</div>
+
+      <button class="btn-pagar" (click)="procesarPago()" [disabled]="loading">
+        <span *ngIf="!loading">Pagar S/ {{ monto | number:'1.2-2' }}</span>
+        <span *ngIf="loading">⌛ Procesando...</span>
+      </button>
+
+      <button class="btn-back" (click)="paso = 'metodo'">← Volver</button>
+
+      <div class="pci-badge">🔒 POWERED BY <strong>izipay</strong></div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         CONFIRMACIÓN
+         ════════════════════════════════════ -->
+    <div class="modal-body" *ngIf="paso === 'confirmacion'">
+
+      <!-- ÉXITO -->
+      <div class="confirm-exito" *ngIf="resultadoPago?.success">
+        <div class="exito-icono">✅</div>
+        <div class="exito-titulo">¡Pago exitoso!</div>
+        <div class="exito-sub">Tu pago de matrícula ha sido procesado correctamente</div>
+
+        <div class="confirm-detalle">
+          <div class="cd-row">
+            <span>Código de transacción</span>
+            <strong>{{ resultadoPago.codigoTransaccion }}</strong>
+          </div>
+          <div class="cd-row">
+            <span>Método de pago</span>
+            <strong>
+              <span *ngIf="resultadoPago.metodoPago === 'TARJETA'">
+                {{ resultadoPago.tipoTarjeta }} ····{{ resultadoPago.ultimosDigitos }}
+              </span>
+              <span *ngIf="resultadoPago.metodoPago === 'YAPE'">
+                Yape {{ resultadoPago.ultimosDigitos }}
+              </span>
+              <span *ngIf="resultadoPago.metodoPago === 'PLIN'">
+                Plin {{ resultadoPago.ultimosDigitos }}
+              </span>
+            </strong>
+          </div>
+          <div class="cd-row">
+            <span>Estudiante</span>
+            <strong>{{ resultadoPago.estudiante }}</strong>
+          </div>
+          <div class="cd-row">
+            <span>Monto pagado</span>
+            <strong class="monto-ok">S/ {{ resultadoPago.monto | number:'1.2-2' }}</strong>
+          </div>
+          <div class="cd-row">
+            <span>Fecha y hora</span>
+            <strong>{{ resultadoPago.fecha }}</strong>
+          </div>
+        </div>
+
+        <div class="exito-msg">
+          📧 Se enviará la confirmación al correo registrado.<br>
+          🎓 Puedes descargar tu voucher desde el portal.
+        </div>
+
+        <button class="btn-cerrar-ok" (click)="cerrar.emit()">
+          Cerrar
+        </button>
+      </div>
+
+      <!-- ERROR / RECHAZO -->
+      <div class="confirm-error" *ngIf="!resultadoPago?.success">
+        <div class="error-icono">❌</div>
+        <div class="error-titulo">Pago rechazado</div>
+        <div class="error-sub">{{ resultadoPago?.mensaje }}</div>
+        <div class="confirm-detalle">
+          <div class="cd-row">
+            <span>Código de intento</span>
+            <strong>{{ resultadoPago?.codigoTransaccion }}</strong>
+          </div>
+        </div>
+        <button class="btn-reintentar" (click)="paso = 'metodo'">
+          Intentar con otro método
+        </button>
+        <button class="btn-back" (click)="cerrar.emit()">Cancelar</button>
+      </div>
+
+    </div>
+
+  </div>
+</div>

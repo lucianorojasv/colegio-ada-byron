@@ -1,0 +1,100 @@
+<!-- grados.component.html -->
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header"><span class="school-name">Colegio Ada A.<br>Byron</span></div>
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">⊞ Dashboard</a>
+      <a routerLink="/alumnos"   routerLinkActive="active" class="nav-item">👤 Alumnos</a>
+      <a routerLink="/secciones" routerLinkActive="active" class="nav-item">⊡ Secciones</a>
+      <a routerLink="/grados"    routerLinkActive="active" class="nav-item active">◉ Grados</a>
+      <a routerLink="/matricula" routerLinkActive="active" class="nav-item">📋 Matrícula</a>
+      <a routerLink="/pagos"     routerLinkActive="active" class="nav-item">💰 Pagos</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Grados</h1>
+        <p>Administra los grados académicos del sistema</p>
+      </div>
+      <button class="btn btn-primary" (click)="abrirCrear()">+ Nuevo Grado</button>
+    </div>
+
+    <div class="alert alert-success" *ngIf="exito">✅ {{ exito }}</div>
+    <div class="alert alert-error"   *ngIf="error && !mostrarModal">⚠️ {{ error }}</div>
+
+    <div *ngIf="loading" class="loading-state">Cargando grados...</div>
+
+    <!-- Grid por niveles -->
+    <ng-container *ngIf="!loading">
+    <div *ngFor="let nivel of niveles" class="nivel-section">
+      <div class="nivel-header">
+        <h2 class="nivel-title">
+          <span class="nivel-dot" [ngClass]="'nivel-' + nivel.idnivel"></span>
+          {{ nivel.nombre }}
+        </h2>
+        <span class="nivel-count">{{ gradosPorNivel(nivel.idnivel).length }} grados</span>
+      </div>
+
+      <div class="grados-grid">
+        <div class="grado-card" *ngFor="let g of gradosPorNivel(nivel.idnivel)">
+          <div class="grado-icon">📚</div>
+          <div class="grado-info">
+            <div class="grado-nombre">{{ g.nombre }}</div>
+            <div class="grado-nivel">
+              <span class="nivel-badge" [ngClass]="'nivel-badge-' + nivel.idnivel">
+                {{ nivel.nombre }}
+              </span>
+            </div>
+          </div>
+          <div class="grado-actions">
+            <button class="action-btn" (click)="abrirEditar(g)" title="Editar">✏️</button>
+            <button class="action-btn danger" (click)="eliminar(g)" title="Eliminar">🗑️</button>
+          </div>
+        </div>
+
+        <div class="grado-card grado-add" (click)="abrirCrear()">
+          <div class="add-icon">+</div>
+          <span>Nuevo grado</span>
+        </div>
+
+        <div *ngIf="gradosPorNivel(nivel.idnivel).length === 0 && !loading" class="no-grados">
+          Sin grados en este nivel
+        </div>
+      </div>
+    </div>
+    </ng-container>
+  </main>
+</div>
+
+<!-- Modal Grado -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal($event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>{{ modoEdicion ? 'Editar Grado' : 'Crear Nuevo Grado' }}</h2>
+      <button class="modal-close" (click)="mostrarModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-error" *ngIf="error">⚠️ {{ error }}</div>
+      <div class="form-group">
+        <label>Nombre del Grado <span class="req">*</span></label>
+        <input type="text" [(ngModel)]="form.nombre" class="form-control"
+               placeholder="Ej. 1ro Primaria" />
+      </div>
+      <div class="form-group" style="margin-top:16px">
+        <label>Nivel Educativo <span class="req">*</span></label>
+        <select [(ngModel)]="form.idnivel" class="form-control">
+          <option [value]="0" disabled>Seleccionar nivel</option>
+          <option *ngFor="let n of niveles" [value]="n.idnivel">{{ n.nombre }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="mostrarModal = false">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardar()" [disabled]="loading">
+        {{ loading ? 'Guardando...' : (modoEdicion ? 'Actualizar' : 'Crear Grado') }}
+      </button>
+    </div>
+  </div>
+</div>

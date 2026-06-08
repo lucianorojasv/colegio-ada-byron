@@ -1,0 +1,180 @@
+<!-- matricula.component.html -->
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="school-name">Colegio Ada A.<br>Byron</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">⊞ Dashboard</a>
+      <a routerLink="/alumnos"   routerLinkActive="active" class="nav-item">👤 Alumnos</a>
+      <a routerLink="/secciones" routerLinkActive="active" class="nav-item">⊡ Secciones</a>
+      <a routerLink="/grados"    routerLinkActive="active" class="nav-item">◉ Grados</a>
+      <a routerLink="/matricula" routerLinkActive="active" class="nav-item active">📋 Matrícula</a>
+      <a routerLink="/pagos"     routerLinkActive="active" class="nav-item">💰 Pagos</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <!-- Header -->
+    <div class="page-header">
+      <div>
+        <h1>Matrícula</h1>
+        <p>Gestiona las matrículas de los alumnos</p>
+      </div>
+      <button class="btn btn-primary" (click)="mostrarFormulario = true">
+        📋 Nueva Matrícula
+      </button>
+    </div>
+
+    <!-- Alertas -->
+    <div class="alert alert-success" *ngIf="exito">✅ {{ exito }}</div>
+    <div class="alert alert-error"   *ngIf="error">⚠️ {{ error }}</div>
+
+    <!-- Stats resumen -->
+    <div class="stats-bar">
+      <div class="stat-chip blue">
+        <span class="chip-val">{{ matriculas.length }}</span>
+        <span class="chip-lbl">Total</span>
+      </div>
+      <div class="stat-chip green">
+        <span class="chip-val">{{ totalActivas }}</span>
+        <span class="chip-lbl">Activas</span>
+      </div>
+      <div class="stat-chip orange">
+        <span class="chip-val">{{ totalPendientes }}</span>
+        <span class="chip-lbl">Pendientes</span>
+      </div>
+      <div class="stat-chip purple">
+        <span class="chip-val">S/ {{ totalIngresos | number:'1.0-0' }}</span>
+        <span class="chip-lbl">Ingresos</span>
+      </div>
+    </div>
+
+    <!-- Tabla de matrículas -->
+    <div class="card">
+      <div class="card-header">
+        <input class="search-input" [(ngModel)]="busquedaTabla"
+               placeholder="🔍 Buscar por alumno, DNI o grado..." />
+      </div>
+
+      <div *ngIf="loading" class="loading-state">Cargando...</div>
+
+      <table class="data-table" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th>Alumno</th>
+            <th>DNI</th>
+            <th>Grado / Sección</th>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of matriculasFiltradas">
+            <td>
+              <div class="alumno-name">
+                {{ m.estudiante?.paterno }} {{ m.estudiante?.materno }}, {{ m.estudiante?.nombre }}
+              </div>
+            </td>
+            <td>{{ m.estudiante?.docidentidad || '—' }}</td>
+            <td>{{ m.seccion?.grado?.nombre }} – {{ m.seccion?.nombre }}</td>
+            <td>{{ m.fecharegisto | date:'dd/MM/yyyy' }}</td>
+            <td>S/ {{ m.pago?.importe | number:'1.2-2' }}</td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + (m.codestado | lowercase)">
+                {{ m.codestado }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="matriculasFiltradas.length === 0">
+            <td colspan="6" class="no-data">Sin registros de matrícula</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- ============================================================
+     MODAL: Nueva Matrícula
+     ============================================================ -->
+<div class="modal-overlay" *ngIf="mostrarFormulario" (click)="cerrarModal($event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Registrar Nueva Matrícula</h2>
+      <button class="modal-close" (click)="mostrarFormulario = false; resetForm()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Buscar alumno por DNI -->
+      <div class="section-title">1. Buscar Alumno</div>
+      <div class="input-row">
+        <div class="form-group flex1">
+          <label>DNI del Alumno</label>
+          <input type="text" [(ngModel)]="dniBusqueda"
+                 placeholder="Ingrese DNI" class="form-control"
+                 (keyup.enter)="buscarPorDni()" maxlength="12" />
+        </div>
+        <button class="btn btn-secondary" (click)="buscarPorDni()"
+                [disabled]="buscandoDni" style="align-self:flex-end">
+          {{ buscandoDni ? 'Buscando...' : '🔍 Buscar' }}
+        </button>
+      </div>
+
+      <!-- Datos del alumno encontrado -->
+      <div class="alumno-card" *ngIf="estudianteEncontrado">
+        <div class="alumno-avatar">
+          {{ estudianteEncontrado.nombre?.charAt(0) }}{{ estudianteEncontrado.paterno?.charAt(0) }}
+        </div>
+        <div class="alumno-info">
+          <strong>{{ estudianteEncontrado.paterno }} {{ estudianteEncontrado.materno }}, {{ estudianteEncontrado.nombre }}</strong>
+          <span>DNI: {{ estudianteEncontrado.docidentidad }}</span>
+          <span>Nacimiento: {{ estudianteEncontrado.fechanac | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="alumno-check">✅</div>
+      </div>
+      <div class="no-alumno" *ngIf="!estudianteEncontrado && dniBusqueda">
+        Ingrese un DNI y presione Buscar
+      </div>
+
+      <!-- Datos de matrícula -->
+      <div class="section-title" style="margin-top:20px">2. Datos de Matrícula</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Sección</label>
+          <select [(ngModel)]="form.idseccion" class="form-control">
+            <option value="0" disabled>Seleccionar sección</option>
+            <option *ngFor="let s of secciones" [value]="s.idseccion">
+              {{ s.grado?.nombre }} – {{ s.nombre }} ({{ s.turno }})
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Año Lectivo</label>
+          <input type="text" [(ngModel)]="form.aniolectivo" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Monto de Matrícula (S/)</label>
+          <input type="number" [(ngModel)]="form.montoMatricula" class="form-control" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Método de Pago</label>
+          <select [(ngModel)]="form.metodopago" class="form-control">
+            <option value="EFECTIVO">Efectivo</option>
+            <option value="TRANSFERENCIA">Transferencia</option>
+            <option value="TARJETA">Tarjeta</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="mostrarFormulario = false; resetForm()">Cancelar</button>
+      <button class="btn btn-primary" (click)="registrarMatricula()" [disabled]="loading || !estudianteEncontrado">
+        {{ loading ? 'Registrando...' : 'Registrar Matrícula' }}
+      </button>
+    </div>
+  </div>
+</div>

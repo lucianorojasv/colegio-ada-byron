@@ -1,0 +1,188 @@
+/* pasarela-pago.component.css */
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* OVERLAY */
+.pasarela-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;z-index:2000;padding:16px}
+
+/* MODAL */
+.pasarela-modal{background:white;border-radius:16px;width:100%;max-width:420px;
+  max-height:92vh;overflow-y:auto;box-shadow:0 16px 60px rgba(0,0,0,.3);
+  font-family:'Segoe UI',sans-serif}
+
+/* HEADER — marca Colegio Ada Byron */
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:14px 18px;background:#1e1e2e}
+.hdr-left{display:flex;align-items:center;gap:10px;flex:1}
+.ada-logo{width:36px;height:36px;border-radius:9px;background:#6c3fc5;
+  color:white;font-size:18px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ada-title{font-size:13px;font-weight:600;color:white;line-height:1.3}
+.ada-sub{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
+.hdr-monto{text-align:right;flex-shrink:0}
+.monto-lbl{font-size:10px;color:rgba(255,255,255,.5)}
+.monto-val{font-size:15px;font-weight:600;color:#ffd700}
+.close-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:50%;width:28px;height:28px;flex-shrink:0;
+  cursor:pointer;font-size:13px;color:rgba(255,255,255,.7);
+  display:flex;align-items:center;justify-content:center;transition:all .15s}
+.close-btn:hover{background:rgba(255,255,255,.2);color:white}
+
+/* BODY */
+.modal-body{padding:20px}
+
+/* MÉTODO */
+.method-title{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:14px}
+.method-option{display:flex;gap:12px;align-items:flex-start;padding:14px;
+  border:1.5px solid #e5e5e5;border-radius:10px;margin-bottom:10px;cursor:pointer;transition:all .18s}
+.method-option:hover{border-color:#e63324;background:#fff5f5}
+.method-option.selected{border-color:#e63324;background:#fff5f5}
+.mo-radio{padding-top:2px;flex-shrink:0}
+.radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid #ccc;position:relative}
+.radio-dot.active{border-color:#e63324}
+.radio-dot.active::after{content:'';position:absolute;inset:3px;border-radius:50%;background:#e63324}
+.mo-title{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px}
+.mo-sub{font-size:11px;color:#888}
+.mo-logos{display:flex;align-items:center;gap:8px;margin-top:8px}
+.mt6{margin-top:6px}
+
+/* Logos método */
+.logo-visa{font-size:13px;font-weight:800;color:#1A1F71;font-family:Georgia,serif;
+  padding:4px 10px;border:1px solid #ddd;border-radius:5px;background:#f8f8f8}
+.logo-mc{display:flex;align-items:center;padding:4px 8px;border:1px solid #ddd;border-radius:5px;background:#f8f8f8}
+.mc-r{width:16px;height:16px;border-radius:50%;background:#EB001B;opacity:.9}
+.mc-y{width:16px;height:16px;border-radius:50%;background:#F79E1B;opacity:.9;margin-left:-6px}
+.logo-amex{font-size:11px;font-weight:700;color:#016FD0;
+  padding:4px 8px;border:1px solid #ddd;border-radius:5px;background:#f0f6ff}
+.logo-yape{display:inline-flex;align-items:center;gap:3px;
+  background:#6c2d8a;color:white;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.logo-yape.lg{padding:6px 14px;font-size:14px;margin:0 auto}
+.logo-plin{display:inline-flex;align-items:center;
+  background:#00b4d8;color:white;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.logo-plin.lg{padding:6px 16px;font-size:14px;margin:0 auto}
+
+/* MONTO */
+.monto-row{text-align:center;font-size:24px;font-weight:700;color:#1a1a1a;
+  padding:14px 0 4px;border-top:1px solid #f0f0f0;margin-top:8px}
+
+/* BOTONES PRINCIPALES */
+.btn-continuar{width:100%;padding:14px;background:#e63324;color:white;border:none;
+  border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px;
+  transition:opacity .2s}
+.btn-continuar:hover{opacity:.9}
+.btn-yape{width:100%;padding:14px;background:#6c2d8a;color:white;border:none;
+  border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px;
+  transition:opacity .2s}
+.btn-yape:hover:not(:disabled){opacity:.9}
+.btn-yape:disabled{opacity:.6;cursor:not-allowed}
+.btn-plin{width:100%;padding:14px;background:#00b4d8;color:white;border:none;
+  border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px}
+.btn-plin:hover:not(:disabled){opacity:.9}
+.btn-plin:disabled{opacity:.6;cursor:not-allowed}
+.btn-pagar{width:100%;padding:14px;background:#00bcd4;color:white;border:none;
+  border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px}
+.btn-pagar:hover:not(:disabled){opacity:.9}
+.btn-pagar:disabled{opacity:.6;cursor:not-allowed}
+.btn-back{width:100%;padding:10px;background:none;border:none;color:#888;
+  font-size:12px;cursor:pointer;margin-top:8px}
+.btn-back:hover{color:#444}
+
+/* FORMULARIOS */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.form-row-full{margin-bottom:14px}
+.form-row-full label{font-size:12px;font-weight:600;color:#444;display:block;margin-bottom:5px}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0}
+label{font-size:12px;font-weight:600;color:#444}
+.hint-text{font-size:11px;color:#888;margin-bottom:4px}
+.form-inp{width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;
+  font-size:14px;outline:none;transition:border-color .2s;background:white}
+.form-inp:focus{border-color:#e63324}
+.input-icon-wrap{position:relative}
+.input-icon-wrap .form-inp{padding-left:36px}
+.inp-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:16px}
+.eye-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;font-size:15px}
+.card-logos-input{position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  display:flex;gap:3px;align-items:center}
+.ci-visa{font-size:10px;font-weight:800;color:#1A1F71}
+.ci-mc{font-size:12px;color:#EB001B;letter-spacing:-4px}
+.ci-amex{font-size:10px;font-weight:700;color:#016FD0}
+.input-icon-wrap .form-inp.with-logos{padding-right:80px}
+
+/* TARJETA PREVIEW */
+.recordatorio{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;
+  padding:9px 13px;font-size:12px;color:#856404;margin-bottom:14px;display:flex;gap:6px}
+.card-preview{background:linear-gradient(135deg,#1a1a2e,#6c3fc5);
+  border-radius:12px;padding:18px 20px;color:white;margin-bottom:16px;position:relative;min-height:130px}
+.card-preview.visa{background:linear-gradient(135deg,#1A1F71,#4A90E2)}
+.card-preview.mastercard{background:linear-gradient(135deg,#1a1a1a,#EB001B)}
+.card-preview.amex{background:linear-gradient(135deg,#016FD0,#00A0E0)}
+.card-chip{font-size:18px;opacity:.7;margin-bottom:14px;letter-spacing:2px}
+.card-number{font-size:15px;font-weight:600;letter-spacing:3px;margin-bottom:14px;
+  font-family:monospace;opacity:.9}
+.card-bottom{display:flex;align-items:flex-end;justify-content:space-between}
+.card-lbl{font-size:9px;opacity:.65;text-transform:uppercase;letter-spacing:.5px}
+.card-val{font-size:11px;font-weight:600;letter-spacing:1px;margin-top:2px}
+.card-brand-logo span{font-size:16px;font-weight:800;opacity:.9;letter-spacing:1px}
+.mc-badge{color:#F79E1B;font-size:18px;letter-spacing:-5px}
+
+/* BILLETERAS */
+.billetera-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.bill-card{border:2px solid #e5e5e5;border-radius:10px;padding:14px;text-align:center;
+  cursor:pointer;transition:all .18s}
+.bill-card:hover{border-color:#6c2d8a}
+.bill-card.sel{border-color:#6c2d8a;background:#f8f0ff}
+.bill-name{font-size:11px;color:#888;margin-top:6px}
+
+/* YAPE FORM */
+.yape-header{text-align:center;margin-bottom:16px}
+.yape-form{background:#faf7ff;border-radius:10px;padding:14px;margin-bottom:0}
+
+/* PLIN */
+.plin-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.plin-title{font-size:14px;font-weight:600;color:#00b4d8}
+.bancos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
+.banco-card{border:1.5px solid #e5e5e5;border-radius:8px;padding:10px 6px;
+  text-align:center;cursor:pointer;position:relative;transition:all .18s}
+.banco-card:hover{border-color:#00b4d8}
+.banco-card.sel{border-color:#00b4d8;background:#e8f9fc}
+.banco-check{position:absolute;top:4px;right:6px;color:#00b4d8;font-size:12px;font-weight:700}
+.banco-icon{width:34px;height:34px;border-radius:8px;color:white;font-size:14px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 5px}
+.banco-name{font-size:10px;color:#555}
+.plin-steps{margin:14px 0;display:flex;flex-direction:column;gap:8px}
+.plin-step{display:flex;align-items:center;gap:10px}
+.step-num{width:26px;height:26px;border-radius:50%;background:#00b4d8;color:white;
+  font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-num.step-pink{background:#c51eb4}
+.step-txt{font-size:13px;color:#333;font-weight:500}
+
+/* PCI */
+.pci-badge{text-align:center;font-size:11px;color:#aaa;margin-top:12px}
+.pci-badge strong{color:#555}
+
+/* ALERT */
+.alert-error{background:#fce4e4;color:#c0392b;border:1px solid #ffcdd2;
+  border-radius:8px;padding:10px 13px;font-size:12px;margin:10px 0}
+
+/* CONFIRMACIÓN */
+.confirm-exito,.confirm-error{text-align:center;padding:10px 0}
+.exito-icono,.error-icono{font-size:56px;margin-bottom:12px}
+.exito-titulo{font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
+.exito-sub,.error-sub{font-size:13px;color:#666;margin-bottom:16px;line-height:1.5}
+.error-titulo{font-size:18px;font-weight:700;color:#c0392b;margin-bottom:6px}
+.confirm-detalle{background:#f9f9f9;border-radius:10px;padding:14px;
+  text-align:left;margin-bottom:16px}
+.cd-row{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
+.cd-row:last-child{border:none}
+.cd-row span{color:#888}
+.cd-row strong{color:#1a1a1a}
+.monto-ok{color:#27ae60;font-size:14px}
+.exito-msg{font-size:12px;color:#666;background:#f0f8f0;border-radius:8px;
+  padding:12px;margin-bottom:16px;line-height:1.7;border:1px solid #c8e6c9}
+.btn-cerrar-ok{width:100%;padding:13px;background:#27ae60;color:white;
+  border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer}
+.btn-cerrar-ok:hover{opacity:.9}
+.btn-reintentar{width:100%;padding:13px;background:#e63324;color:white;
+  border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px}

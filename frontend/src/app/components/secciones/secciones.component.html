@@ -1,0 +1,117 @@
+<!-- secciones.component.html -->
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header"><span class="school-name">Colegio Ada A.<br>Byron</span></div>
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">⊞ Dashboard</a>
+      <a routerLink="/alumnos"   routerLinkActive="active" class="nav-item">👤 Alumnos</a>
+      <a routerLink="/secciones" routerLinkActive="active" class="nav-item active">⊡ Secciones</a>
+      <a routerLink="/grados"    routerLinkActive="active" class="nav-item">◉ Grados</a>
+      <a routerLink="/matricula" routerLinkActive="active" class="nav-item">📋 Matrícula</a>
+      <a routerLink="/pagos"     routerLinkActive="active" class="nav-item">💰 Pagos</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Secciones</h1>
+        <p>Administra las secciones por grado y turno</p>
+      </div>
+      <button class="btn btn-primary" (click)="abrirCrear()">+ Nueva Sección</button>
+    </div>
+
+    <div class="alert alert-success" *ngIf="exito">✅ {{ exito }}</div>
+    <div class="alert alert-error"   *ngIf="error && !mostrarModal">⚠️ {{ error }}</div>
+
+    <div *ngIf="loading" class="loading-state">Cargando secciones...</div>
+
+    <!-- Grid de secciones tipo tarjeta (igual al prototipo) -->
+    <div class="secciones-grid" *ngIf="!loading">
+      <div class="seccion-card" *ngFor="let s of secciones">
+        <div class="seccion-card-header">
+          <span class="seccion-nombre">{{ s.grado?.nombre }} – {{ s.nombre }}</span>
+          <span class="turno-badge" [ngClass]="getTurnoColor(s.turno)">{{ s.turno }}</span>
+        </div>
+        <div class="seccion-body">
+          <div class="seccion-row">
+            <span class="sec-label">Capacidad:</span>
+            <span class="sec-val">{{ s.capacidad }} alumnos</span>
+          </div>
+          <div class="seccion-row">
+            <span class="sec-label">Turno:</span>
+            <span class="sec-val">{{ s.turno }}</span>
+          </div>
+          <div class="seccion-row">
+            <span class="sec-label">Aula:</span>
+            <span class="sec-val">{{ s.aula || '—' }}</span>
+          </div>
+        </div>
+        <div class="seccion-footer">
+          <button class="btn btn-sm btn-outline" (click)="abrirEditar(s)">✏️ Editar</button>
+          <button class="btn btn-sm btn-danger-outline" (click)="eliminar(s)">🗑️ Eliminar</button>
+        </div>
+      </div>
+
+      <!-- Tarjeta "agregar" -->
+      <div class="seccion-card seccion-add" (click)="abrirCrear()">
+        <div class="add-content">
+          <div class="add-plus">+</div>
+          <span>Nueva Sección</span>
+        </div>
+      </div>
+
+      <div *ngIf="secciones.length === 0" class="no-data-full">
+        No hay secciones registradas. ¡Crea la primera!
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal Sección -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal($event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>{{ modoEdicion ? 'Editar Sección' : 'Crear Nueva Sección' }}</h2>
+      <button class="modal-close" (click)="mostrarModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-error" *ngIf="error">⚠️ {{ error }}</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre de Sección <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="form.nombre" class="form-control" placeholder="Ej. A, B, C" />
+        </div>
+        <div class="form-group">
+          <label>Grado <span class="req">*</span></label>
+          <select [(ngModel)]="form.idgrado" class="form-control">
+            <option [value]="0" disabled>Seleccionar grado</option>
+            <option *ngFor="let g of grados" [value]="g.idgrado">{{ g.nombre }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Capacidad</label>
+          <input type="number" [(ngModel)]="form.capacidad" class="form-control" min="1" max="60" />
+        </div>
+        <div class="form-group">
+          <label>Turno</label>
+          <select [(ngModel)]="form.turno" class="form-control">
+            <option value="Mañana">Mañana</option>
+            <option value="Tarde">Tarde</option>
+            <option value="Noche">Noche</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Aula</label>
+          <input type="text" [(ngModel)]="form.aula" class="form-control" placeholder="Número de aula" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="mostrarModal = false">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardar()" [disabled]="loading">
+        {{ loading ? 'Guardando...' : (modoEdicion ? 'Actualizar' : 'Guardar Sección') }}
+      </button>
+    </div>
+  </div>
+</div>

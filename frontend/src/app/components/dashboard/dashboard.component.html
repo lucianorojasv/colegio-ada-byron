@@ -1,0 +1,214 @@
+<div class="app-layout">
+
+  <!-- ── SIDEBAR ───────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="school-name">Colegio Ada A.<br>Byron</span>
+      <span class="year-badge">2026</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard"    routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">⊞</span> Dashboard
+      </a>
+      <div class="nav-sep">Académico</div>
+      <a routerLink="/alumnos"      routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">👤</span> Alumnos
+      </a>
+      <a routerLink="/grados"       routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">◉</span> Grados
+      </a>
+      <a routerLink="/secciones"    routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">⊡</span> Secciones
+      </a>
+      <div class="nav-sep">Matrícula</div>
+      <a routerLink="/matricula"    routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📋</span> Matrícula
+      </a>
+      <a routerLink="/secretaria"   routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📝</span> Solicitudes
+        <span class="nav-badge" *ngIf="pendientes > 0">{{ pendientes }}</span>
+      </a>
+      <a routerLink="/pagos"        routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">💰</span> Pagos
+      </a>
+      <div class="nav-sep">Administración</div>
+      <a routerLink="/usuarios"     routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">🔐</span> Usuarios
+      </a>
+      <div class="nav-sep">Acceso Externo</div>
+      <a routerLink="/portal-padre" target="_blank" class="nav-item nav-ext">
+        <span class="nav-icon">🌐</span> Portal del Padre
+        <span class="ext-arr">↗</span>
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="su-avatar">{{ usuario?.charAt(0)?.toUpperCase() }}</div>
+      <div class="su-info">
+        <div class="su-name">{{ usuario }}</div>
+        <div class="su-rol">{{ rol }}</div>
+      </div>
+      <button class="su-logout" (click)="logout()" title="Cerrar sesión">⇢</button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ──────────────────────────────── -->
+  <main class="main-content">
+
+    <div class="top-bar">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="welcome">Bienvenido, <strong>{{ usuario }}</strong> —
+          <span class="rol-pill" [ngClass]="'rol-' + rol?.toLowerCase()">{{ rol }}</span>
+        </p>
+      </div>
+      <div class="top-actions">
+        <button class="btn btn-excel" (click)="exportarExcel()">📊 Exportar Excel</button>
+        <a routerLink="/portal-padre" target="_blank" class="btn btn-portal">🌐 Portal del Padre</a>
+      </div>
+    </div>
+
+    <!-- ── STATS ─────────────────────────────── -->
+    <div class="stats-grid">
+      <div class="stat-card" routerLink="/alumnos" style="cursor:pointer">
+        <div class="stat-body">
+          <div class="stat-label">Total Alumnos</div>
+          <div class="stat-val">{{ stats.totalAlumnos | number }}</div>
+          <div class="stat-sub">Registrados en el sistema</div>
+        </div>
+        <div class="stat-icon si-blue">👤</div>
+      </div>
+      <div class="stat-card" routerLink="/matricula" style="cursor:pointer">
+        <div class="stat-body">
+          <div class="stat-label">Matrículas 2026</div>
+          <div class="stat-val">{{ stats.totalMatriculas }}</div>
+          <div class="stat-sub">Activas este año</div>
+        </div>
+        <div class="stat-icon si-purple">📋</div>
+      </div>
+      <div class="stat-card" [class.stat-alert]="pendientes > 0" routerLink="/secretaria" style="cursor:pointer">
+        <div class="stat-body">
+          <div class="stat-label">Solicitudes Pendientes</div>
+          <div class="stat-val">{{ pendientes }}</div>
+          <div class="stat-sub" [class.text-alert]="pendientes > 0">
+            {{ pendientes > 0 ? '⚠️ Requieren atención' : 'Sin pendientes' }}
+          </div>
+        </div>
+        <div class="stat-icon si-orange">📝</div>
+      </div>
+      <div class="stat-card" routerLink="/pagos" style="cursor:pointer">
+        <div class="stat-body">
+          <div class="stat-label">Ingresos S/</div>
+          <div class="stat-val">{{ stats.totalIngresos | number:'1.0-0' }}</div>
+          <div class="stat-sub">{{ totalPagos }} pagos registrados</div>
+        </div>
+        <div class="stat-icon si-green">💰</div>
+      </div>
+    </div>
+
+    <!-- ── MÓDULOS GRID ───────────────────── -->
+    <div class="modulos-grid">
+      <a routerLink="/alumnos"    class="modulo-card"><div class="mc-icon mc-blue">👤</div><div class="mc-body"><div class="mc-title">Alumnos</div><div class="mc-desc">Registra y gestiona estudiantes</div></div><div class="mc-arrow">→</div></a>
+      <a routerLink="/grados"     class="modulo-card"><div class="mc-icon mc-teal">◉</div><div class="mc-body"><div class="mc-title">Grados</div><div class="mc-desc">Administra los niveles educativos</div></div><div class="mc-arrow">→</div></a>
+      <a routerLink="/secciones"  class="modulo-card"><div class="mc-icon mc-indigo">⊡</div><div class="mc-body"><div class="mc-title">Secciones</div><div class="mc-desc">Turnos, aulas y vacantes</div></div><div class="mc-arrow">→</div></a>
+      <a routerLink="/matricula"  class="modulo-card"><div class="mc-icon mc-purple">📋</div><div class="mc-body"><div class="mc-title">Matrícula</div><div class="mc-desc">Registra y controla matrículas</div></div><div class="mc-arrow">→</div></a>
+      <a routerLink="/secretaria" class="modulo-card" [class.mc-alert]="pendientes > 0">
+        <div class="mc-icon mc-orange">📝</div>
+        <div class="mc-body"><div class="mc-title">Solicitudes <span class="mc-badge" *ngIf="pendientes > 0">{{ pendientes }}</span></div><div class="mc-desc">Aprobar solicitudes de padres</div></div>
+        <div class="mc-arrow">→</div>
+      </a>
+      <a routerLink="/pagos"      class="modulo-card"><div class="mc-icon mc-green">💳</div><div class="mc-body"><div class="mc-title">Pagos</div><div class="mc-desc">Yape, Plin, tarjeta y efectivo</div></div><div class="mc-arrow">→</div></a>
+      <a routerLink="/usuarios"   class="modulo-card"><div class="mc-icon mc-dark">🔐</div><div class="mc-body"><div class="mc-title">Usuarios</div><div class="mc-desc">Roles y accesos al sistema</div></div><div class="mc-arrow">→</div></a>
+      <a routerLink="/portal-padre" target="_blank" class="modulo-card mc-external">
+        <div class="mc-icon mc-sky">🌐</div>
+        <div class="mc-body"><div class="mc-title">Portal del Padre ↗</div><div class="mc-desc">Matrícula virtual en línea</div></div>
+        <button class="mc-copy" (click)="copiarUrl($event)">📋 Copiar URL</button>
+      </a>
+    </div>
+
+    <!-- ── BOTTOM GRID ────────────────────── -->
+    <div class="bottom-grid">
+
+      <!-- Matrículas recientes -->
+      <div class="card">
+        <div class="card-head">
+          <h3>Matrículas recientes</h3>
+          <a routerLink="/matricula" class="card-link">Ver todo →</a>
+        </div>
+        <div class="activity-list">
+          <div class="act-item" *ngFor="let m of ultimasMatriculas">
+            <div class="act-dot"></div>
+            <div class="act-body">
+              <span class="act-name">{{ m.estudiante?.paterno }} {{ m.estudiante?.nombre }}</span>
+              <span class="act-grado">{{ m.seccion?.grado?.nombre }}</span>
+            </div>
+            <span class="act-time">{{ m.fecharegisto | date:'dd/MM HH:mm' }}</span>
+          </div>
+          <div class="no-data" *ngIf="ultimasMatriculas.length === 0">Sin matrículas recientes</div>
+        </div>
+      </div>
+
+      <!-- Acciones rápidas -->
+      <div class="card">
+        <div class="card-head"><h3>Acciones rápidas</h3></div>
+        <div class="quick-grid">
+          <a routerLink="/alumnos"    class="qa qa-purple">👤 Nuevo Alumno</a>
+          <a routerLink="/matricula"  class="qa qa-blue">📋 Nueva Matrícula</a>
+          <a routerLink="/secretaria" class="qa qa-orange">
+            📝 Solicitudes
+            <span class="qa-badge" *ngIf="pendientes > 0">{{ pendientes }}</span>
+          </a>
+          <a routerLink="/pagos"      class="qa qa-green">💳 Registrar Pago</a>
+          <a routerLink="/usuarios"   class="qa qa-dark">🔐 Usuarios</a>
+          <button class="qa qa-gray"  (click)="exportarExcel()">📊 Excel</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── PAGOS RECIENTES ────────────────── -->
+    <div class="card pagos-card">
+      <div class="card-head">
+        <h3>💳 Últimos pagos registrados</h3>
+        <a routerLink="/pagos" class="card-link">Ver todos →</a>
+      </div>
+      <div *ngIf="ultimosPagos.length === 0" class="no-data">
+        No hay pagos registrados aún
+      </div>
+      <div class="pagos-list" *ngIf="ultimosPagos.length > 0">
+        <div class="pago-row" *ngFor="let p of ultimosPagos">
+          <div class="pago-icono"
+               [ngClass]="p.metodopago === 'YAPE' ? 'pi-yape' :
+                           p.metodopago?.startsWith('PLIN') ? 'pi-plin' : 'pi-card'">
+            <span *ngIf="p.metodopago === 'YAPE'">📱</span>
+            <span *ngIf="p.metodopago?.startsWith('PLIN')">📲</span>
+            <span *ngIf="p.metodopago !== 'YAPE' && !p.metodopago?.startsWith('PLIN')">💳</span>
+          </div>
+          <div class="pago-body">
+            <span class="pago-nombre">{{ p.estudiante?.paterno }} {{ p.estudiante?.nombre }}</span>
+            <span class="pago-met">{{ p.metodopago || 'Efectivo' }}</span>
+          </div>
+          <div class="pago-right">
+            <span class="pago-monto">S/ {{ p.importe | number:'1.2-2' }}</span>
+            <span class="pago-badge" [ngClass]="p.codestado === 'PAGADO' ? 'pb-ok' : 'pb-pend'">
+              {{ p.codestado }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BANNER PORTAL ──────────────────── -->
+    <div class="banner">
+      <div class="banner-icon">🌐</div>
+      <div class="banner-body">
+        <div class="banner-title">Portal de Matrícula Virtual para Padres</div>
+        <div class="banner-sub">Comparte este enlace: <code>localhost:4200/portal-padre</code></div>
+      </div>
+      <div class="banner-actions">
+        <a routerLink="/portal-padre" target="_blank" class="banner-btn">Abrir →</a>
+        <button class="banner-copy" (click)="copiarUrl($event)">📋 Copiar URL</button>
+      </div>
+    </div>
+
+  </main>
+</div>

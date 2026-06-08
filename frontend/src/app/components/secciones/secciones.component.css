@@ -1,0 +1,92 @@
+/* secciones.component.css */
+* { box-sizing: border-box; }
+.app-layout { display: flex; min-height: 100vh; font-family: 'Segoe UI', sans-serif; background: #f5f6fa; }
+
+.sidebar { width: 220px; min-height: 100vh; background: #1e1e2e; color: white;
+  display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; }
+.sidebar-header { padding: 20px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.school-name { font-size: 14px; font-weight: 700; line-height: 1.4; }
+.sidebar-nav { flex: 1; padding: 12px 0; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 20px;
+  color: rgba(255,255,255,.65); text-decoration: none; font-size: 14px; transition: all .2s; }
+.nav-item:hover, .nav-item.active { background: rgba(108,63,197,.3); color: white; border-left: 3px solid #6c3fc5; }
+
+.main-content { margin-left: 220px; flex: 1; padding: 32px; }
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.page-header h1 { font-size: 24px; font-weight: 700; color: #1a1a2e; margin: 0 0 4px; }
+.page-header p  { color: #888; font-size: 14px; margin: 0; }
+.loading-state  { text-align: center; padding: 40px; color: #888; }
+
+.alert { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+.alert-success { background: #e8f5e9; color: #27ae60; border: 1px solid #c8e6c9; }
+.alert-error   { background: #fce4e4; color: #c0392b; border: 1px solid #ffcdd2; }
+
+/* Grid tarjetas */
+.secciones-grid { display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+
+.seccion-card { background: white; border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06); overflow: hidden; transition: box-shadow .2s; }
+.seccion-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+
+.seccion-card-header { padding: 16px 20px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #f5f5f5; }
+.seccion-nombre { font-size: 15px; font-weight: 700; color: #1a1a2e; }
+
+.turno-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.turno-manana { background: #fff3e0; color: #e67e22; }
+.turno-tarde  { background: #e3f2fd; color: #2980b9; }
+.turno-noche  { background: #f3e5f5; color: #8e44ad; }
+
+.seccion-body { padding: 14px 20px; }
+.seccion-row { display: flex; justify-content: space-between; padding: 6px 0;
+  border-bottom: 1px solid #f9f9f9; font-size: 13px; }
+.sec-label { color: #888; }
+.sec-val   { font-weight: 500; color: #333; }
+
+.seccion-footer { padding: 14px 20px; display: flex; gap: 10px;
+  border-top: 1px solid #f5f5f5; }
+
+/* Tarjeta agregar */
+.seccion-add { background: transparent; border: 2px dashed #dde1e7;
+  cursor: pointer; min-height: 180px; display: flex;
+  align-items: center; justify-content: center; }
+.seccion-add:hover { border-color: #6c3fc5; background: #f9f5ff; }
+.add-content { display: flex; flex-direction: column; align-items: center; gap: 8px; color: #aaa; }
+.seccion-add:hover .add-content { color: #6c3fc5; }
+.add-plus { font-size: 32px; line-height: 1; font-weight: 300; }
+.no-data-full { text-align: center; color: #aaa; padding: 40px; grid-column: 1/-1; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px;
+  border-radius: 8px; border: none; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: opacity .2s; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.btn:hover:not(:disabled) { opacity: .85; }
+.btn-primary { background: #6c3fc5; color: white; }
+.btn-ghost   { background: transparent; color: #888; border: 1px solid #ddd; }
+.btn-sm      { padding: 7px 14px; font-size: 12px; flex: 1; justify-content: center; }
+.btn-outline       { background: #f0edf9; color: #6c3fc5; border: 1px solid #d8cff0; }
+.btn-danger-outline{ background: #fce4e4; color: #c0392b; border: 1px solid #f5c6cb; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal { background: white; border-radius: 14px; width: 100%; max-width: 520px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.2); }
+.modal-header { display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; border-bottom: 1px solid #f0f0f0; }
+.modal-header h2 { margin: 0; font-size: 18px; color: #1a1a2e; }
+.modal-close  { background: none; border: none; font-size: 20px; color: #aaa; cursor: pointer; }
+.modal-body   { padding: 24px; }
+.modal-footer { display: flex; gap: 12px; justify-content: flex-end;
+  padding: 16px 24px; border-top: 1px solid #f0f0f0; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; font-weight: 600; color: #555; }
+.req { color: #c0392b; }
+.form-control { padding: 10px 14px; border: 1.5px solid #dde1e7; border-radius: 8px;
+  font-size: 14px; outline: none; transition: border-color .2s; }
+.form-control:focus { border-color: #6c3fc5; }

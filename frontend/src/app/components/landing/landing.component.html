@@ -1,0 +1,442 @@
+<!-- landing.component.html -->
+<div class="landing-wrap">
+
+  <!-- ══════════════════════════════════════════
+       NAVBAR
+       ══════════════════════════════════════════ -->
+  <nav class="navbar" [class.scrolled]="scrolled">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="brand-logo">
+          <span class="logo-letter">A</span>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">Colegio Ada Byron</div>
+          <div class="brand-slogan">Educación de Calidad para la Vida</div>
+        </div>
+      </div>
+
+      <div class="nav-links" [class.open]="menuAbierto">
+        <a class="nav-link" (click)="scrollTo('inicio')">Inicio</a>
+        <a class="nav-link" (click)="scrollTo('nosotros')">Quiénes somos</a>
+        <a class="nav-link" (click)="scrollTo('propuesta')">Propuesta educativa</a>
+        <a class="nav-link" (click)="scrollTo('admision')">Admisión</a>
+        <a class="nav-link" (click)="scrollTo('contacto')">Contacto</a>
+        <a routerLink="/portal-padre" class="nav-btn btn-outline-w" (click)="cerrarMenu()">
+          📋 Solicitar matrícula
+        </a>
+        <a routerLink="/login" class="nav-btn btn-solid" (click)="cerrarMenu()">
+          🔐 Ingresar
+        </a>
+      </div>
+
+      <button class="hamburger" (click)="toggleMenu()" [class.active]="menuAbierto">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       HERO
+       ══════════════════════════════════════════ -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg"></div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-tag">🎓 Proceso de Admisión 2026 Abierto</div>
+        <h1 class="hero-title">
+          Forma el futuro<br>
+          <span class="hero-highlight">con nosotros</span>
+        </h1>
+        <p class="hero-desc">
+          Somos una institución educativa comprometida con la excelencia académica
+          y la formación integral de nuestros estudiantes. Preparamos líderes
+          para los retos del mundo moderno.
+        </p>
+        <div class="hero-actions">
+          <a routerLink="/portal-padre" class="btn-hero-primary">
+            📋 Solicitar matrícula virtual
+          </a>
+          <button class="btn-hero-secondary" (click)="scrollTo('nosotros')">
+            Conoce más →
+          </button>
+        </div>
+        <div class="hero-badges">
+          <div class="hbadge"><span>✅</span> 100% en línea</div>
+          <div class="hbadge"><span>⚡</span> Proceso ágil</div>
+          <div class="hbadge"><span>🔒</span> Seguro</div>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="hero-img-card">
+          <div class="img-placeholder">
+            <div class="img-icon">🏫</div>
+            <div class="img-text">Colegio Ada A. Byron</div>
+            <div class="img-sub">Chincha, Ica — Perú</div>
+          </div>
+          <div class="floating-card fc1">
+            <span class="fc-icon">👤</span>
+            <div><div class="fc-val">850+</div><div class="fc-lbl">Estudiantes</div></div>
+          </div>
+          <div class="floating-card fc2">
+            <span class="fc-icon">🏆</span>
+            <div><div class="fc-val">30 años</div><div class="fc-lbl">de excelencia</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#f5f6fa"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       CONTADORES
+       ══════════════════════════════════════════ -->
+  <section class="counters" id="counters">
+    <div class="cnt-container">
+      <div class="cnt-card" *ngFor="let c of contadores">
+        <div class="cnt-icon">{{ c.icono }}</div>
+        <div class="cnt-val">{{ c.valor }}{{ c.sufijo }}</div>
+        <div class="cnt-lbl">{{ c.label }}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       QUIÉNES SOMOS
+       ══════════════════════════════════════════ -->
+  <section class="section" id="nosotros">
+    <div class="sec-container">
+      <div class="sec-header">
+        <div class="sec-tag">Quiénes somos</div>
+        <h2 class="sec-title">Contamos con Infraestructura<br><span class="accent">Especializada</span></h2>
+        <p class="sec-desc">
+          Cada uno de nuestros espacios ha sido diseñado para potenciar
+          el aprendizaje y el desarrollo integral de nuestros estudiantes.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feat-card">
+          <div class="feat-img feat-img-1">
+            <div class="feat-img-icon">📚</div>
+          </div>
+          <div class="feat-icon-circle">🏆</div>
+          <h3 class="feat-title">Alto nivel académico</h3>
+          <p class="feat-desc">Excelencia educativa con metodologías innovadoras y docentes altamente capacitados.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-img feat-img-2">
+            <div class="feat-img-icon">💡</div>
+          </div>
+          <div class="feat-icon-circle">❤️</div>
+          <h3 class="feat-title">Formación en valores</h3>
+          <p class="feat-desc">Desarrollo integral basado en principios éticos y ciudadanía responsable.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-img feat-img-3">
+            <div class="feat-img-icon">💻</div>
+          </div>
+          <div class="feat-icon-circle">🖥️</div>
+          <h3 class="feat-title">Plataforma virtual propia</h3>
+          <p class="feat-desc">Tecnología educativa de vanguardia con aulas virtuales y matrícula en línea.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-img feat-img-4">
+            <div class="feat-img-icon">🎨</div>
+          </div>
+          <div class="feat-icon-circle">🎨</div>
+          <h3 class="feat-title">Arte y cultura</h3>
+          <p class="feat-desc">Talleres de música, teatro, pintura y danza para el desarrollo creativo.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-img feat-img-5">
+            <div class="feat-img-icon">⚽</div>
+          </div>
+          <div class="feat-icon-circle">⚽</div>
+          <h3 class="feat-title">Deporte y salud</h3>
+          <p class="feat-desc">Canchas deportivas y programas de actividad física para el bienestar integral.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-img feat-img-6">
+            <div class="feat-img-icon">🔬</div>
+          </div>
+          <div class="feat-icon-circle">🔬</div>
+          <h3 class="feat-title">Laboratorio de ciencias</h3>
+          <p class="feat-desc">Equipamiento moderno para experimentos y desarrollo del pensamiento científico.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PROPUESTA EDUCATIVA
+       ══════════════════════════════════════════ -->
+  <section class="section section-gray" id="propuesta">
+    <div class="sec-container">
+      <div class="sec-header">
+        <div class="sec-tag">Propuesta educativa</div>
+        <h2 class="sec-title">Una educación <span class="accent">integral y moderna</span></h2>
+        <p class="sec-desc">Formamos estudiantes competentes, críticos y comprometidos con la sociedad.</p>
+      </div>
+
+      <div class="niveles-grid">
+        <div class="nivel-card">
+          <div class="nivel-icon">🌱</div>
+          <h3>Inicial</h3>
+          <p>3 a 5 años. Estimulación temprana y desarrollo de habilidades sociales en un ambiente seguro y amoroso.</p>
+          <div class="nivel-detail">
+            <span>📅 Lunes a Viernes</span>
+            <span>⏰ 8:00 am – 1:00 pm</span>
+          </div>
+        </div>
+        <div class="nivel-card nivel-featured">
+          <div class="nivel-badge">⭐ Más popular</div>
+          <div class="nivel-icon">📗</div>
+          <h3>Primaria</h3>
+          <p>1ro a 6to grado. Formación sólida en matemáticas, comunicación, ciencias e inglés desde 1er grado.</p>
+          <div class="nivel-detail">
+            <span>📅 Lunes a Viernes</span>
+            <span>⏰ 7:30 am – 1:30 pm</span>
+          </div>
+        </div>
+        <div class="nivel-card">
+          <div class="nivel-icon">📘</div>
+          <h3>Secundaria</h3>
+          <p>1ro a 5to año. Preparación universitaria, orientación vocacional y liderazgo estudiantil.</p>
+          <div class="nivel-detail">
+            <span>📅 Lunes a Viernes</span>
+            <span>⏰ 7:00 am – 2:00 pm</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       ADMISIÓN
+       ══════════════════════════════════════════ -->
+  <section class="section" id="admision">
+    <div class="sec-container">
+      <div class="sec-header">
+        <div class="sec-tag">Admisión 2026</div>
+        <h2 class="sec-title">Proceso de matrícula <span class="accent">100% virtual</span></h2>
+        <p class="sec-desc">Realiza la matrícula de tu hijo desde la comodidad de tu hogar, sin colas.</p>
+      </div>
+
+      <div class="pasos-grid">
+        <div class="paso-card">
+          <div class="paso-num">01</div>
+          <div class="paso-icon">📋</div>
+          <h3 class="paso-title">Llena el formulario</h3>
+          <p class="paso-desc">Completa los datos del apoderado y del estudiante en nuestro portal virtual.</p>
+        </div>
+        <div class="paso-arrow">→</div>
+        <div class="paso-card">
+          <div class="paso-num">02</div>
+          <div class="paso-icon">📝</div>
+          <h3 class="paso-title">Revisión</h3>
+          <p class="paso-desc">La secretaría revisa tu solicitud y te notifica el resultado en menos de 48 horas.</p>
+        </div>
+        <div class="paso-arrow">→</div>
+        <div class="paso-card">
+          <div class="paso-num">03</div>
+          <div class="paso-icon">💳</div>
+          <h3 class="paso-title">Realiza el pago</h3>
+          <p class="paso-desc">Una vez aprobada tu solicitud, realiza el pago de matrícula en línea de forma segura.</p>
+        </div>
+        <div class="paso-arrow">→</div>
+        <div class="paso-card paso-card-final">
+          <div class="paso-num">04</div>
+          <div class="paso-icon">🎉</div>
+          <h3 class="paso-title">¡Listo!</h3>
+          <p class="paso-desc">Tu hijo ya está matriculado. Recibirás la confirmación y el horario por correo.</p>
+        </div>
+      </div>
+
+      <div class="admision-cta">
+        <a routerLink="/portal-padre" class="btn-cta">
+          Iniciar proceso de matrícula →
+        </a>
+        <p class="cta-sub">Disponible las 24 horas, los 7 días de la semana</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       TESTIMONIOS
+       ══════════════════════════════════════════ -->
+  <section class="section section-purple" id="testimonios">
+    <div class="sec-container">
+      <div class="sec-header" style="color:white">
+        <div class="sec-tag sec-tag-light">Testimonios</div>
+        <h2 class="sec-title" style="color:white">Lo que dicen nuestras <span style="color:#ffd700">familias</span></h2>
+      </div>
+
+      <div class="test-grid">
+        <div class="test-card">
+          <div class="test-stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"Excelente colegio. Mis hijos han crecido mucho académica y personalmente. Los docentes son muy comprometidos."</p>
+          <div class="test-author">
+            <div class="test-av">MG</div>
+            <div>
+              <div class="test-name">María García</div>
+              <div class="test-rol">Madre de familia — 3 años con nosotros</div>
+            </div>
+          </div>
+        </div>
+        <div class="test-card">
+          <div class="test-stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"El proceso de matrícula virtual fue muy fácil y rápido. En 2 días ya teníamos confirmación. Muy eficiente."</p>
+          <div class="test-author">
+            <div class="test-av" style="background:#27ae60">CR</div>
+            <div>
+              <div class="test-name">Carlos Ramírez</div>
+              <div class="test-rol">Padre de familia — Nuevo estudiante 2026</div>
+            </div>
+          </div>
+        </div>
+        <div class="test-card">
+          <div class="test-stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"La formación en valores es lo que más nos gustó. Nuestro hijo aprendió a ser responsable y solidario."</p>
+          <div class="test-author">
+            <div class="test-av" style="background:#e67e22">LT</div>
+            <div>
+              <div class="test-name">Lucía Torres</div>
+              <div class="test-rol">Madre de familia — 5 años con nosotros</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       CONTACTO
+       ══════════════════════════════════════════ -->
+  <section class="section" id="contacto">
+    <div class="sec-container">
+      <div class="sec-header">
+        <div class="sec-tag">Contacto</div>
+        <h2 class="sec-title">¿Tienes alguna <span class="accent">pregunta?</span></h2>
+        <p class="sec-desc">Estamos aquí para ayudarte. Contáctanos por cualquiera de estos medios.</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="ci-icon">📍</div>
+            <div>
+              <div class="ci-title">Dirección</div>
+              <div class="ci-val">Av. San Martín 245, Chincha Alta, Ica — Perú</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="ci-icon">📞</div>
+            <div>
+              <div class="ci-title">Teléfono</div>
+              <div class="ci-val">(056) 262-345 / 987 654 321</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="ci-icon">📧</div>
+            <div>
+              <div class="ci-title">Correo</div>
+              <div class="ci-val">admision&#64;adabyron.edu.pe</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="ci-icon">⏰</div>
+            <div>
+              <div class="ci-title">Horario de atención</div>
+              <div class="ci-val">Lunes a Viernes: 8:00 am – 5:00 pm<br>Sábados: 8:00 am – 12:00 pm</div>
+            </div>
+          </div>
+
+          <div class="social-row">
+            <a class="social-btn" href="#" title="Facebook">
+              <span>f</span>
+            </a>
+            <a class="social-btn" href="#" title="Instagram">
+              <span>📷</span>
+            </a>
+            <a class="social-btn" href="#" title="YouTube">
+              <span>▶</span>
+            </a>
+            <a class="social-btn" href="#" title="WhatsApp" style="background:#25d366">
+              <span>💬</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-cta-box">
+          <div class="cta-box-icon">🎓</div>
+          <h3>¿Listo para inscribirte?</h3>
+          <p>Completa el formulario de matrícula virtual y asegura el cupo de tu hijo para el año 2026.</p>
+          <a routerLink="/portal-padre" class="btn-cta-box">
+            📋 Iniciar matrícula virtual
+          </a>
+          <div class="cta-box-sep">— o —</div>
+          <a routerLink="/login" class="btn-cta-box-sec">
+            🔐 Acceder al sistema
+          </a>
+          <div class="cta-box-info">
+            <span>✅ Proceso 100% en línea</span>
+            <span>⚡ Respuesta en 48 horas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="brand-logo sm"><span class="logo-letter sm">A</span></div>
+          <div>
+            <div class="brand-name sm">Colegio Ada A. Byron</div>
+            <div class="brand-slogan sm">Educación de Calidad para la Vida</div>
+          </div>
+        </div>
+        <p class="footer-desc">Formando líderes con valores, conocimiento y compromiso social desde hace más de 30 años en Chincha, Ica.</p>
+      </div>
+      <div class="footer-links">
+        <div class="fl-col">
+          <div class="fl-title">Institución</div>
+          <a (click)="scrollTo('nosotros')">Quiénes somos</a>
+          <a (click)="scrollTo('propuesta')">Propuesta educativa</a>
+          <a (click)="scrollTo('testimonios')">Testimonios</a>
+        </div>
+        <div class="fl-col">
+          <div class="fl-title">Servicios</div>
+          <a routerLink="/portal-padre">Matrícula virtual</a>
+          <a routerLink="/login">Portal estudiantes</a>
+          <a routerLink="/login">Portal admin</a>
+        </div>
+        <div class="fl-col">
+          <div class="fl-title">Niveles</div>
+          <a>Inicial</a>
+          <a>Primaria</a>
+          <a>Secundaria</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© {{ anioActual }} Colegio Ada A. Byron — Chincha, Ica. Todos los derechos reservados.</p>
+      <p>"Matrícula ágil, segura y al alcance de todos."</p>
+    </div>
+  </footer>
+
+  <!-- FAB: Botón flotante matrícula -->
+  <a routerLink="/portal-padre" class="fab-btn" title="Solicitar matrícula">
+    📋
+  </a>
+
+</div>

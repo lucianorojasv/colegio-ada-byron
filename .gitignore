@@ -1,0 +1,54 @@
+# ── BACKEND (Java / Maven / Spring Boot) ──────────────────
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.pid
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IntelliJ IDEA / NetBeans / Eclipse
+.idea/
+*.iml
+*.iws
+*.ipr
+.settings/
+.classpath
+.project
+.factorypath
+nb-configuration.xml
+nbactions.xml
+
+# VS Code Java
+.vscode/settings.json
+
+# ── FRONTEND (Angular / Node) ─────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.env
+frontend/.env.local
+frontend/npm-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+# ── BASE DE DATOS ─────────────────────────────────────────
+# No subir dumps con datos sensibles
+# database/backup_*.sql
+
+# ── SISTEMA OPERATIVO ──────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.swp
+*~
+
+# ── CREDENCIALES (NUNCA SUBIR) ────────────────────────────
+application-prod.properties
+*.key
+*.pem
+secrets.yml

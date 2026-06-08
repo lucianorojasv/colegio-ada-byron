@@ -1,0 +1,126 @@
+<!-- alumnos.component.html -->
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header"><span class="school-name">Colegio Ada A.<br>Byron</span></div>
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">⊞ Dashboard</a>
+      <a routerLink="/alumnos"   routerLinkActive="active" class="nav-item active">👤 Alumnos</a>
+      <a routerLink="/secciones" routerLinkActive="active" class="nav-item">⊡ Secciones</a>
+      <a routerLink="/grados"    routerLinkActive="active" class="nav-item">◉ Grados</a>
+      <a routerLink="/matricula" routerLinkActive="active" class="nav-item">📋 Matrícula</a>
+      <a routerLink="/pagos"     routerLinkActive="active" class="nav-item">💰 Pagos</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Registro de Alumnos</h1>
+        <p>Gestiona la información de los estudiantes</p>
+      </div>
+      <button class="btn btn-primary" (click)="abrirCrear()">👤 Nuevo Alumno</button>
+    </div>
+
+    <div class="alert alert-success" *ngIf="exito">✅ {{ exito }}</div>
+    <div class="alert alert-error"   *ngIf="error && !mostrarModal">⚠️ {{ error }}</div>
+
+    <div class="card">
+      <div class="card-header">
+        <input class="search-input" [(ngModel)]="busqueda" (ngModelChange)="buscar()"
+               placeholder="🔍 Buscar por nombre, apellido o DNI..." />
+        <span class="total-badge">{{ alumnosFiltrados.length }} alumnos</span>
+      </div>
+
+      <div *ngIf="loading" class="loading-state">Cargando alumnos...</div>
+
+      <table class="data-table" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th>Nombre Completo</th>
+            <th>DNI</th>
+            <th>Fecha Nacimiento</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of alumnosFiltrados">
+            <td>
+              <div class="alumno-cell">
+                <div class="avatar">{{ a.nombre?.charAt(0) }}{{ a.paterno?.charAt(0) }}</div>
+                <div>
+                  <div class="nombre-full">{{ a.paterno }} {{ a.materno }}, {{ a.nombre }}</div>
+                  <div class="sub-info">{{ a.direccion || 'Sin dirección' }}</div>
+                </div>
+              </div>
+            </td>
+            <td>{{ a.docidentidad || '—' }}</td>
+            <td>{{ a.fechanac | date:'dd/MM/yyyy' }}</td>
+            <td>{{ a.ubigeo || '—' }}</td>
+            <td>
+              <span class="badge" [ngClass]="a.estado === 'ACTIVO' ? 'badge-activo' : 'badge-inactivo'">
+                {{ a.estado }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <button class="action-btn edit" (click)="abrirEditar(a)" title="Editar">✏️</button>
+                <button class="action-btn delete" (click)="eliminar(a)" title="Desactivar">🗑️</button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="alumnosFiltrados.length === 0">
+            <td colspan="6" class="no-data">No se encontraron alumnos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- Modal Alumno -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal($event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>{{ modoEdicion ? 'Editar Alumno' : 'Registrar Nuevo Alumno' }}</h2>
+      <button class="modal-close" (click)="mostrarModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-error" *ngIf="error">⚠️ {{ error }}</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="form.nombre" class="form-control" placeholder="Nombres" />
+        </div>
+        <div class="form-group">
+          <label>Apellido Paterno <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="form.paterno" class="form-control" placeholder="Apellido paterno" />
+        </div>
+        <div class="form-group">
+          <label>Apellido Materno <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="form.materno" class="form-control" placeholder="Apellido materno" />
+        </div>
+        <div class="form-group">
+          <label>DNI</label>
+          <input type="text" [(ngModel)]="form.docidentidad" class="form-control"
+                 placeholder="Número de DNI" maxlength="12" />
+        </div>
+        <div class="form-group">
+          <label>Fecha de Nacimiento <span class="req">*</span></label>
+          <input type="date" [(ngModel)]="form.fechanac" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Dirección</label>
+          <input type="text" [(ngModel)]="form.direccion" class="form-control" placeholder="Dirección" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="mostrarModal = false">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardar()" [disabled]="loading">
+        {{ loading ? 'Guardando...' : (modoEdicion ? 'Actualizar' : 'Guardar Alumno') }}
+      </button>
+    </div>
+  </div>
+</div>

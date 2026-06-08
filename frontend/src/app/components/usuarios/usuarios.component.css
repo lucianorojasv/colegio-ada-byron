@@ -1,0 +1,140 @@
+/* usuarios.component.css */
+* { box-sizing: border-box; }
+.app-layout { display: flex; min-height: 100vh; font-family: 'Segoe UI', sans-serif; background: #f5f6fa; }
+
+/* Sidebar */
+.sidebar { width: 230px; min-height: 100vh; background: #1e1e2e; color: white;
+  display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; }
+.sidebar-header { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08);
+  display: flex; align-items: center; justify-content: space-between; }
+.school-name { font-size: 13px; font-weight: 700; line-height: 1.4; }
+.year-badge { background: #6c3fc5; padding: 3px 8px; border-radius: 12px; font-size: 11px; }
+.sidebar-nav { flex: 1; padding: 10px 0; overflow-y: auto; }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 11px 18px;
+  color: rgba(255,255,255,.6); text-decoration: none; font-size: 13px;
+  transition: all .2s; border-left: 3px solid transparent; }
+.nav-item:hover, .nav-item.active { background: rgba(108,63,197,.3); color: white; border-left-color: #6c3fc5; }
+.nav-icon { font-size: 14px; width: 18px; text-align: center; font-style: normal; flex-shrink: 0; }
+.nav-sep { padding: 14px 18px 5px; font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: 1px; }
+.nav-ext { color: rgba(255,255,255,.4); }
+.nav-ext:hover { color: rgba(255,255,255,.75); }
+
+/* Main */
+.main-content { margin-left: 230px; flex: 1; padding: 28px 32px; }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; }
+.page-header h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; margin: 0 0 4px; }
+.page-header p  { color: #888; font-size: 13px; margin: 0; }
+
+/* Alerts */
+.alert { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+.alert-success { background: #e8f5e9; color: #27ae60; border: 1px solid #c8e6c9; }
+.alert-error   { background: #fce4e4; color: #c0392b; border: 1px solid #ffcdd2; }
+
+/* Stats */
+.stats-row { display: flex; gap: 12px; margin-bottom: 18px; }
+.stat-chip { background: white; border-radius: 10px; padding: 14px 20px;
+  border: 1px solid #f0f0f0; box-shadow: 0 2px 6px rgba(0,0,0,.05); }
+.ch-val { font-size: 26px; font-weight: 700; margin-bottom: 3px; }
+.ch-lbl { font-size: 11px; color: #888; }
+.ch-blue   { color: #2980b9; }
+.ch-green  { color: #27ae60; }
+.ch-red    { color: #c0392b; }
+.ch-purple { color: #6c3fc5; }
+
+/* Roles info */
+.roles-info { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.rol-card { background: white; border-radius: 8px; padding: 10px 14px;
+  border: 1px solid #f0f0f0; display: flex; align-items: center; gap: 10px; }
+.rol-desc { font-size: 12px; color: #666; }
+
+/* Rol badges */
+.rol-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.rol-admin  { background: #f0edf9; color: #6c3fc5; border: 1px solid #d8cff0; }
+.rol-sec    { background: #e8f4fd; color: #2980b9; border: 1px solid #bee3f8; }
+.rol-dir    { background: #e8f5e9; color: #27ae60; border: 1px solid #c8e6c9; }
+.rol-padre  { background: #fff3e0; color: #e67e22; border: 1px solid #ffe0b2; }
+
+/* Status */
+.status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.status-activo   { background: #e8f5e9; color: #27ae60; }
+.status-inactivo { background: #fce4e4; color: #c0392b; }
+
+/* Card */
+.card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.06); overflow: hidden; }
+.card-header { padding: 14px 18px; border-bottom: 1px solid #f0f0f0;
+  display: flex; align-items: center; gap: 14px; }
+.search-input { flex: 1; max-width: 380px; padding: 9px 14px;
+  border: 1.5px solid #dde1e7; border-radius: 8px; font-size: 13px; outline: none; }
+.search-input:focus { border-color: #6c3fc5; }
+.total-label { font-size: 12px; color: #aaa; }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { padding: 11px 16px; font-size: 11px; font-weight: 600;
+  color: #888; text-align: left; border-bottom: 1px solid #f0f0f0;
+  background: #fafafa; text-transform: uppercase; letter-spacing: .4px; }
+.data-table td { padding: 13px 16px; font-size: 13px; color: #444; border-bottom: 1px solid #f7f7f7; }
+.data-table tr:hover td { background: #fafafe; }
+.id-col { color: #ccc; font-size: 11px; width: 40px; }
+.loading-state { text-align: center; padding: 40px; color: #888; }
+.no-data { text-align: center; color: #aaa; padding: 40px; }
+
+/* User cell */
+.user-cell { display: flex; align-items: center; gap: 12px; }
+.user-avatar { width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: white; flex-shrink: 0; }
+.av-admin     { background: #6c3fc5; }
+.av-secretaria{ background: #2980b9; }
+.av-directivo { background: #27ae60; }
+.av-padre     { background: #e67e22; }
+.user-name { font-weight: 600; color: #1a1a2e; font-size: 13px; }
+.user-sub  { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+/* Actions */
+.actions-cell { display: flex; gap: 5px; }
+.action-btn { background: none; border: none; cursor: pointer; font-size: 16px;
+  padding: 5px 7px; border-radius: 6px; transition: background .2s; }
+.action-btn:hover { background: #f0f0f0; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px;
+  border-radius: 8px; border: none; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: opacity .2s; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.btn:hover:not(:disabled) { opacity: .85; }
+.btn-primary { background: #6c3fc5; color: white; }
+.btn-ghost   { background: transparent; color: #888; border: 1px solid #ddd; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.modal { background: white; border-radius: 14px; width: 100%; max-width: 500px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.2); }
+.modal-header { display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 24px; border-bottom: 1px solid #f0f0f0; }
+.modal-header h2 { margin: 0; font-size: 17px; color: #1a1a2e; }
+.modal-close { background: none; border: none; font-size: 20px; color: #aaa; cursor: pointer; }
+.modal-body   { padding: 22px 24px; }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end;
+  padding: 14px 24px; border-top: 1px solid #f0f0f0; }
+
+/* Form */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 12px; font-weight: 600; color: #555; }
+.req { color: #c0392b; margin-left: 2px; }
+.opt { color: #aaa; font-weight: 400; font-size: 11px; margin-left: 4px; }
+.hint { font-size: 11px; color: #aaa; }
+.form-control { padding: 10px 12px; border: 1.5px solid #dde1e7; border-radius: 8px;
+  font-size: 13px; outline: none; transition: border-color .2s; width: 100%; }
+.form-control:focus { border-color: #6c3fc5; }
+
+/* Rol info box */
+.rol-info-box { border-radius: 8px; padding: 11px 14px; font-size: 12px; }
+.rol-info-admin      { background: #f0edf9; color: #6c3fc5; border: 1px solid #d8cff0; }
+.rol-info-secretaria { background: #e8f4fd; color: #2980b9; border: 1px solid #bee3f8; }
+.rol-info-directivo  { background: #e8f5e9; color: #27ae60; border: 1px solid #c8e6c9; }
+.rol-info-padre      { background: #fff3e0; color: #e67e22; border: 1px solid #ffe0b2; }

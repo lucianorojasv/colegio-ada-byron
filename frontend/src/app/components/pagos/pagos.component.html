@@ -1,0 +1,108 @@
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="school-name">Colegio Ada A.<br>Byron</span>
+      <span class="year-badge">2026</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard"  routerLinkActive="active" class="nav-item"><span class="ni">⊞</span> Dashboard</a>
+      <a routerLink="/alumnos"    routerLinkActive="active" class="nav-item"><span class="ni">👤</span> Alumnos</a>
+      <a routerLink="/grados"     routerLinkActive="active" class="nav-item"><span class="ni">◉</span> Grados</a>
+      <a routerLink="/secciones"  routerLinkActive="active" class="nav-item"><span class="ni">⊡</span> Secciones</a>
+      <a routerLink="/matricula"  routerLinkActive="active" class="nav-item"><span class="ni">📋</span> Matrícula</a>
+      <a routerLink="/pagos"      routerLinkActive="active" class="nav-item active"><span class="ni">💰</span> Pagos</a>
+      <a routerLink="/secretaria" routerLinkActive="active" class="nav-item"><span class="ni">📝</span> Solicitudes</a>
+      <a routerLink="/usuarios"   routerLinkActive="active" class="nav-item"><span class="ni">🔐</span> Usuarios</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Control de Pagos</h1>
+        <p>Registra y gestiona los pagos de matrícula</p>
+      </div>
+      <button class="btn btn-primary" (click)="abrirPasarela()">
+        💳 Nuevo Pago
+      </button>
+    </div>
+
+    <div class="alert alert-success" *ngIf="exito">{{ exito }}</div>
+    <div class="alert alert-error"   *ngIf="error">⚠️ {{ error }}</div>
+
+    <!-- Métodos de pago disponibles -->
+    <div class="metodos-info">
+      <div class="mi-title">Métodos de pago disponibles</div>
+      <div class="mi-chips">
+        <span class="mchip visa">VISA</span>
+        <span class="mchip mc">Mastercard</span>
+        <span class="mchip amex">AMEX</span>
+        <span class="mchip yape">S/ Yape</span>
+        <span class="mchip plin">plin</span>
+      </div>
+    </div>
+
+    <!-- Tabla pagos -->
+    <div class="card">
+      <div class="card-header">
+        <input class="search-input" [(ngModel)]="busqueda"
+               placeholder="🔍 Buscar por alumno o método..." />
+        <span class="total-lbl">{{ pagosFiltrados.length }} registros</span>
+      </div>
+      <div *ngIf="loading" class="loading-state">Cargando pagos...</div>
+      <table class="data-table" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Estudiante</th>
+            <th>Concepto</th>
+            <th>Método</th>
+            <th>Monto</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of pagosFiltrados">
+            <td class="id-col">{{ p.idpago }}</td>
+            <td>
+              <div class="al-name">{{ p.estudiante?.paterno }} {{ p.estudiante?.nombre }}</div>
+            </td>
+            <td><div class="al-name">{{ p.conceptoPago?.nombre || 'Matrícula' }}</div></td>
+            <td>
+              <span class="metodo-chip" [ngClass]="'m-' + p.metodopago?.toLowerCase()">
+                {{ p.metodopago || '—' }}
+              </span>
+            </td>
+            <td class="monto-col">S/ {{ p.importe | number:'1.2-2' }}</td>
+            <td>
+              <span class="estado-badge" [ngClass]="getEstadoClass(p.codestado)">
+                {{ p.codestado }}
+              </span>
+            </td>
+            <td>
+              <button class="btn-accion" (click)="abrirPasarela(p.estudiante)"
+                      *ngIf="p.codestado !== 'PAGADO'" title="Procesar pago">
+                💳
+              </button>
+              <span *ngIf="p.codestado === 'PAGADO'" class="pagado-ok">✅</span>
+            </td>
+          </tr>
+          <tr *ngIf="pagosFiltrados.length === 0">
+            <td colspan="7" class="no-data">No hay registros de pagos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- PASARELA DE PAGO -->
+<app-pasarela-pago
+  *ngIf="mostrarPasarela"
+  [idestudiante]="estudianteSeleccionado?.idestudiante || 1"
+  [nombreEstudiante]="estudianteSeleccionado?.nombre + ' ' + estudianteSeleccionado?.paterno"
+  [monto]="montoPago"
+  (pagoExitoso)="onPagoExitoso($event)"
+  (cerrar)="mostrarPasarela = false">
+</app-pasarela-pago>
